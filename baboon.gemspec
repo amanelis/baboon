@@ -4,8 +4,8 @@ require File.expand_path('../lib/baboon/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Alex Manelis"]
   gem.email         = ["amanelis@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{A lite weight deployment package for rails applications}
+  gem.summary       = %q{Add a configuration file, setup and deploy}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
@@ -14,4 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "baboon"
   gem.require_paths = ["lib"]
   gem.version       = Baboon::VERSION
+
+  gem.add_development_dependency "rspec"
+  gem.rubyforge_project = "baboon"
 end
