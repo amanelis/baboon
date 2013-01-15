@@ -1,5 +1,5 @@
 require "baboon/version"
+require "baboon/configuration"
 
 module Baboon
-  # Your code goes here...
 end
