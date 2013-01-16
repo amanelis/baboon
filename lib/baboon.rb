@@ -1,5 +1,3 @@
-require "baboon/version"
-require "baboon/configuration"
-
-module Baboon
-end
+require 'active_support/dependencies'
+require 'baboon/version'
+require 'baboon/configuration'
