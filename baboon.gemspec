@@ -17,9 +17,8 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = 'baboon'
 
-  s.add_dependency 'rails'
-  s.add_dependency 'rake'
-  
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rails'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rspec-core'
   s.add_development_dependency 'rspec-mocks'
