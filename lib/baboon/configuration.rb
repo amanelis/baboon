@@ -9,7 +9,8 @@ module Baboon
     :deploy_path,       # => This will be the actual deploy path of the application, should have /home/#{user}/app
     :deploy_user,       # => This will be the user the system will authenticate with to do the deploy, should have sudo
     :branch,            # => Branch we will be cloning from on GIT
-    :rails_env
+    :rails_env,         # => The rails environment the sever will be running
+    :servers            # => An array of servers baboon will push to
   ]
 
   # Baboon.configuration => output of configuration options

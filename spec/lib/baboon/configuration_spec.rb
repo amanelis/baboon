@@ -47,6 +47,12 @@ describe Baboon::Configuration do
         Baboon.configuration.rails_env.should == nil
       end
     end
+    
+    context 'when nothing is given for servers' do
+      it 'should not be nil' do
+        Baboon.configuration.servers.should == nil
+      end
+    end
   end
   
   describe 'configuration object should respond accordingly if is configured' do
@@ -59,6 +65,7 @@ describe Baboon::Configuration do
         config.deploy_user = :rails
         config.branch      = :master
         config.rails_env   = :production
+        config.servers     = ['server_1', 'server_2']
       end
     end
     
@@ -101,6 +108,12 @@ describe Baboon::Configuration do
     context 'when a rails_env is assigned' do
       it 'should not be nil' do
         Baboon.configuration.rails_env.should eq(:production)
+      end
+    end
+    
+    context 'when a server is assigned' do
+      it 'should not be nil' do
+        Baboon.configuration.servers.should eq(['server_1', 'server_2'])
       end
     end
   end
