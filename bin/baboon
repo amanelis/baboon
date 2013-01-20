@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'baboon'
-Baboon::CLI.start
+require 'baboon/cli'
+Baboon::Cli.start
