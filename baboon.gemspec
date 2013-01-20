@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage      = ''
 
   s.files         = `git ls-files`.split($\)
-  s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  s.executables   = ["baboon"]
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.name          = 'baboon'
   s.require_paths = ['lib']
