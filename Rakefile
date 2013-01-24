@@ -1,11 +1,10 @@
 #!/usr/bin/env rake
-require "bundler/gem_tasks"
 
 directory '.'
-task :dgem => :environment do
+task :dgem do
   sh 'rm *.gem'
 end
 
-task :bgem => :environment do
+task :bgem do
   sh 'gem build *.gemspec'
 end

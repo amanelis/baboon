@@ -5,6 +5,8 @@ Gem::Specification.new do |s|
   s.name          = 'baboon'
   s.version       = Baboon::VERSION
   s.executables   = %w[ baboon ]
+  s.license       = 'MIT'
+  s.homepage      = 'https://github.com/amanelis/baboon'
   
   s.authors       = ['Alex Manelis']
   s.email         = ['amanelis@gmail.com']
