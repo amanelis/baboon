@@ -6,12 +6,16 @@
 
 A simple and light weight deployment library for a ruby on rails application 3.0+.
 
+
+# How it works
+Baboon is simple. You provide your server addresses, environments, path, repository and a username. Baboon does the rest. By running a simple `baboon deploy {env}` it will do all neccessary operations you intend for it to do on a full deploy to a production staging or development server. All you need setup is a working rails application on a server and/or have your keys setup so you don't have to type your password in. Baboon also has rollbacks which just do a git reset {prev commit}. Later there will be better support for this. Future support for Baboon will be CI. 
+
+
 ---
 # Install
 This must be installed under a current rails application. We recommend vendoring or installing through bundler.
 
 	gem install baboon
-	
 
 ---
 # Configure
@@ -19,7 +23,7 @@ This must be installed under a current rails application. We recommend vendoring
 In your Gemfile, then `bundle install`.
 
 	group :development do
-		gem 'baboon'
+	  gem 'baboon'
 	end
 	
 Now that the gem is installed, run the config generator
@@ -29,7 +33,7 @@ Now that the gem is installed, run the config generator
 This will build a file into your application under `config/initializers/baboon.rb`. Open this file and start editing. Here is an example of the 8 configuration options:
 
 	Baboon.configure do |config|
-  	config.application  = 'Vacuum HQ'
+  	  config.application  = 'Vacuum HQ'
 	  config.repository   = 'git@github.com:amanelis/vacuum.git'
 	  config.releases     = 5
 	  config.deploy_path  = '/home/rails/vacuum'
@@ -40,9 +44,21 @@ This will build a file into your application under `config/initializers/baboon.r
 	end
 
 ---
+# Commands
+Once everything is setup you can run `baboon` to see availabe tasks. Start by seeing if your configuration was properlly generated.
+
+	baboon configuration
+	
+Once you see and verify your Baboon.configuration you can now go ahead and test a deploy. For now, lets assume you have everything in your config correct and you are deploying to production:
+
+	baboon deploy
+	
+Thats it? Yeah, thats it! You should see your bundle installing and Baboon running all tasks. Custom tasks coming soon.
+
+---
 # CLI
 
-coming soon…
+This is coming very soon…
 
 
 ---
@@ -51,7 +67,7 @@ coming soon…
     $ bundle
   
 #### Run rSpec  
-    $ rspec spec
+    $ rspec spec/
 
 ## Issues
   None.
