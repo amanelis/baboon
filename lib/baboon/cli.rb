@@ -1,18 +1,79 @@
 require 'baboon'
+require 'baboon/configuration'
+require 'baboon/logger'
 require 'thor'
 
 module Baboon
+  class Error
+    class << self
+      def stop reason
+        raise StandardError, reason
+      end
+    end
+  end
+  
+  class Util
+    class << self
+      def read_configuration(file)
+        configuration = []
+        line_number = 0
+        text = File.open(file).read
+        text.gsub!(/\r\n?/, '\n')
+
+        text.each_line do |line|
+          next if line.include?('Baboon.configure')
+          next if line.include?('end')
+          line.gsub!(/^(.*)\s=\s/, '')
+          line.gsub!('\'', '')
+          line.strip!
+          
+          configuration << { BABOON_CONFIGURATION_OPTIONS[line_number] => line }
+          line_number += 1
+        end
+        
+        return configuration.reduce({}, :merge)
+      end
+    end
+  end
+  
   class Cli < Thor
-    desc "check", "Determines if Baboon.configuration has properly been set"
-    def check
+    attr_accessor :logger, :configuration
+
+    def initialize(*args)
+      super
+      @logger ||= Logger.new({level: 3, disable_formatters: false})
       
+      # Load the users baboon configuration
+      if File.exists?("config/initializers/baboon.rb")
+        @configuration = Util.read_configuration("config/initializers/baboon.rb")
+        
+        Baboon.configure do |config|
+          config.application  = @configuration[:application]
+          config.repository   = @configuration[:repository]
+          config.releases     = @configuration[:releases]
+          config.deploy_path  = @configuration[:deploy_path]
+          config.deploy_user  = @configuration[:deploy_user]
+          config.branch       = @configuration[:branch]
+          config.rails_env    = @configuration[:rails_env]
+          config.servers      = @configuration[:servers]
+        end
+      else
+        Error.stop("Baboon says there is no configuration file at: config/initializers/baboon.rb. Please run `rails g baboon:install`")
+      end
     end
-    
-    desc "configuration", "Lists the current baboon deployment options set in the initializer"
+
+    desc "configuration", "Shows the current configuration for baboon"
     def configuration
-      
+      printf @logger.format("Baboon[Application]: #{Baboon.configuration.application}", "37", 1)
+      printf @logger.format("Baboon[Repository]: #{Baboon.configuration.repository}", "37", 1)
+      printf @logger.format("Baboon[Releases]: #{Baboon.configuration.releases}", "37", 1)
+      printf @logger.format("Baboon[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
+      printf @logger.format("Baboon[Deploy_user]: #{Baboon.configuration.deploy_user}", "37", 1)
+      printf @logger.format("Baboon[Branch]: #{Baboon.configuration.branch}", "37", 1)
+      printf @logger.format("Baboon[rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
+      printf @logger.format("Baboon[servers]: #{Baboon.configuration.servers}", "37", 1)
     end
-    
+
     # desc "init", "Generates deployment customization scripts for your app"
     # def init
     #   require 'generators/baboon/install/intall_generator'

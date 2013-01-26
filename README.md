@@ -29,10 +29,10 @@ Now that the gem is installed, run the config generator
 This will build a file into your application under `config/initializers/baboon.rb`. Open this file and start editing. Here is an example of the 8 configuration options:
 
 	Baboon.configure do |config|
-  	  config.application  = 'Rails Grind'
-	  config.repository   = 'git@github.com:128lines/railsgrind.git'
+  	config.application  = 'Vacuum HQ'
+	  config.repository   = 'git@github.com:amanelis/vacuum.git'
 	  config.releases     = 5
-	  config.deploy_path  = '/home/rails/railsgrind'
+	  config.deploy_path  = '/home/rails/vacuum'
 	  config.deploy_user  = :rails
 	  config.branch       = :master
 	  config.rails_env    = :production
