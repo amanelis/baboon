@@ -1,7 +1,9 @@
 require 'baboon'
 require 'baboon/configuration'
 require 'baboon/logger'
+
 require 'thor'
+require 'net/ssh'
 
 module Baboon
   class Error
@@ -43,6 +45,8 @@ module Baboon
       super
       @logger ||= Logger.new({level: 3, disable_formatters: false})
       
+      $stdout.sync = true
+      
       # Load the users baboon configuration
       if File.exists?("config/initializers/baboon.rb")
         @configuration = Util.read_configuration("config/initializers/baboon.rb")
@@ -61,6 +65,37 @@ module Baboon
         Error.stop("Baboon says there is no configuration file at: config/initializers/baboon.rb. Please run `rails g baboon:install`")
       end
     end
+    
+    desc "deploy", "Starts a real deploy to a server"
+    def deploy
+      printf @logger.format(" == Baboon starting deploy", "32", 1)
+      
+      # Essentially these are the instructions we need run for the Ubuntu 11.04
+      instructions = [
+        "cd #{Baboon.configuration.deploy_path} && bundle install",
+        "cd #{Baboon.configuration.deploy_path} && git fetch",
+        "cd #{Baboon.configuration.deploy_path} && git checkout #{Baboon.configuration.branch.to_s}",
+        "cd #{Baboon.configuration.deploy_path} && git merge origin/#{Baboon.configuration.branch.to_s}",
+        "cd #{Baboon.configuration.deploy_path} && touch tmp/restart.txt"
+      ]
+      
+      # Vars for connecting via ssh to the server
+      credentials = { 
+        user: Baboon.configuration.deploy_user.to_s, 
+        host: 'ec2-50-19-131-228.compute-1.amazonaws.com'
+      }
+            
+      Net::SSH.start(credentials[:host], credentials[:user]) do |session|
+        instructions.each do |instruction|
+          puts "instruction executing: #{instruction}"
+          puts ""
+          session.exec instruction
+          session.loop
+        end
+      end
+      
+      printf @logger.format(" == Baboon deploy Complete", "31", 1)
+    end
 
     desc "configuration", "Shows the current configuration for baboon"
     def configuration
@@ -70,8 +105,8 @@ module Baboon
       printf @logger.format("Baboon[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
       printf @logger.format("Baboon[Deploy_user]: #{Baboon.configuration.deploy_user}", "37", 1)
       printf @logger.format("Baboon[Branch]: #{Baboon.configuration.branch}", "37", 1)
-      printf @logger.format("Baboon[rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
-      printf @logger.format("Baboon[servers]: #{Baboon.configuration.servers}", "37", 1)
+      printf @logger.format("Baboon[Rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
+      printf @logger.format("Baboon[Servers]: #{Baboon.configuration.servers}", "37", 1)
     end
 
     # desc "init", "Generates deployment customization scripts for your app"
