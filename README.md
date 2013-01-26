@@ -8,7 +8,7 @@ A simple and light weight deployment library for a ruby on rails application 3.0
 
 
 # How it works
-Baboon is simple. You provide your server addresses, environments, path, repository and a username. Baboon does the rest. By running a simple `baboon deploy {env}` it will do all neccessary operations you intend for it to do on a full deploy to a production staging or development server. All you need setup is a working rails application on a server and/or have your keys setup so you don't have to type your password in. Baboon also has rollbacks which just do a git reset {prev commit}. Later there will be better support for this. Future support for Baboon will be CI. 
+Baboon is simple. You provide your server addresses, environments, path, repository and a username. Baboon does the rest. By running a simple `baboon deploy {env}` it will do all neccessary operations you intend for it to do on a full deploy to a production staging or development server. All you need is a working rails application on a server and/or have your keys setup so you don't have to type your password in. Baboon also has rollbacks which just do a git reset {prev commit}. Later there will be better support for this.
 
 
 ---
