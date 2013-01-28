@@ -55,6 +55,16 @@ Once you see and verify your Baboon.configuration you can now go ahead and test 
 	
 Thats it? Yeah, thats it! You should see your bundle installing and Baboon running all tasks. Custom tasks coming soon.
 
+The next commands that will be realeased with future versions of baboon are:
+
+	baboon check 		# checks the server and config file for proper configuration
+	baboon migrate 		# runs pending migrations
+	baboon restart 		# restarts your server
+	baboon rollback 	# rolls back your to your previous commit, info in ./log/baboon.log
+	baboon rake 		# run custom rake tasks on server
+	baboon execute 		# run a single command on the server
+	baboon shell	 	# open a remote shell with the config user
+
 ---
 # CLI
 
