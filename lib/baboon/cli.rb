@@ -54,7 +54,6 @@ module Baboon
         Baboon.configure do |config|
           config.application  = @configuration[:application]
           config.repository   = @configuration[:repository]
-          config.releases     = @configuration[:releases]
           config.deploy_path  = @configuration[:deploy_path]
           config.deploy_user  = @configuration[:deploy_user]
           config.branch       = @configuration[:branch]
@@ -101,7 +100,6 @@ module Baboon
     def configuration
       printf @logger.format("Baboon[Application]: #{Baboon.configuration.application}", "37", 1)
       printf @logger.format("Baboon[Repository]: #{Baboon.configuration.repository}", "37", 1)
-      printf @logger.format("Baboon[Releases]: #{Baboon.configuration.releases}", "37", 1)
       printf @logger.format("Baboon[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
       printf @logger.format("Baboon[Deploy_user]: #{Baboon.configuration.deploy_user}", "37", 1)
       printf @logger.format("Baboon[Branch]: #{Baboon.configuration.branch}", "37", 1)

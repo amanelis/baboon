@@ -18,12 +18,6 @@ describe Baboon::Configuration do
       end
     end
     
-    context 'when nothing is given for releases' do
-      it 'should not be nil' do
-        Baboon.configuration.releases.should == nil
-      end
-    end
-    
     context 'when nothing is given for deploy_path' do
       it 'should not be nil' do
         Baboon.configuration.deploy_path.should == nil
@@ -60,7 +54,6 @@ describe Baboon::Configuration do
       Baboon.configure do |config|
         config.application = 'console'
         config.repository  = 'git@github.com:128lines/console.fm.git'
-        config.releases    = 5
         config.deploy_path = '/home/rails/console.fm/'
         config.deploy_user = :rails
         config.branch      = :master
@@ -78,12 +71,6 @@ describe Baboon::Configuration do
     context 'when a repository is assigned' do
       it 'should not be nil' do
         Baboon.configuration.repository.should eq('git@github.com:128lines/console.fm.git')
-      end
-    end
-    
-    context 'when a releases is assigned' do
-      it 'should not be nil' do
-        Baboon.configuration.releases.should eq(5)
       end
     end
     

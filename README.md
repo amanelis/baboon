@@ -4,12 +4,11 @@
 [![Build Status](https://secure.travis-ci.org/amanelis/baboon.png)](http://travis-ci.org/amanelis/baboon)
 [![Dependency Status](https://gemnasium.com/amanelis/baboon.png)](https://gemnasium.com/amanelis/baboon)
 
-A simple and light weight deployment library for a ruby on rails application 3.0+.
+A simple and light weight deployment library for a ruby on rails application 3.0+. No symlinks, no releases, just git and your application. 
 
 
 # How it works
-Baboon is simple. You provide your server addresses, environments, path, repository and a username. Baboon does the rest. By running a simple `baboon deploy {env}` it will do all neccessary operations you intend for it to do on a full deploy to a production staging or development server. All you need is a working rails application on a server and/or have your keys setup so you don't have to type your password in. Baboon also has rollbacks which just do a git reset {prev commit}. Later there will be better support for this.
-
+Baboon is simple. You provide your server addresses, environments, path, repository, username and Baboon does the rest. By running a simple `baboon deploy {env}` it will do all neccessary operations you intend for it to do on a full deploy to a production staging or development server. All you need is a working rails application on a server with a git repository.
 
 ---
 # Install
@@ -30,18 +29,19 @@ Now that the gem is installed, run the config generator
 
 	rails g baboon:install
 
-This will build a file into your application under `config/initializers/baboon.rb`. Open this file and start editing. Here is an example of the 8 configuration options:
+This will build a file into your application under `config/initializers/baboon.rb`. Open this file and start editing. Here is an example of the main configuration options:
 
 	Baboon.configure do |config|
   	  config.application  = 'Vacuum HQ'
 	  config.repository   = 'git@github.com:amanelis/vacuum.git'
-	  config.releases     = 5
 	  config.deploy_path  = '/home/rails/vacuum'
-	  config.deploy_user  = :rails
-	  config.branch       = :master
-	  config.rails_env    = :production
-	  config.servers      = ['server_1', 'server_2']
+	  config.deploy_user  = 'rails
+	  config.branch       = 'master'
+	  config.rails_env    = 'production'
+	  config.servers      = ['192.168.1.1', '192.168.1.2']
 	end
+	
+These must be properly filled out so baboon can properly make deploys.
 
 ---
 # Commands
