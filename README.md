@@ -57,6 +57,7 @@ Thats it? Yeah, thats it! You should see your bundle installing and Baboon runni
 
 The next commands that will be realeased with future versions of baboon are:
 
+  baboon setup    # no manually editing of configuration file
 	baboon check 		# checks the server and config file for proper configuration
 	baboon migrate 		# runs pending migrations
 	baboon restart 		# restarts your server
