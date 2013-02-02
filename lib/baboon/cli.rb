@@ -61,7 +61,9 @@ module Baboon
           config.servers      = @configuration[:servers]
         end
       else
-        Error.stop("Baboon says there is no configuration file at: config/initializers/baboon.rb. Please run `rails g baboon:install`")
+        #Error.stop("Baboon says there is no configuration file at: config/initializers/baboon.rb. Please run `rails g baboon:install`")
+        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
+        printf @logger.format("USAGE: rails g baboon:install", "35", 1) 
       end
     end
     
