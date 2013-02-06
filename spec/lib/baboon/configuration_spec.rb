@@ -103,5 +103,11 @@ describe Baboon::Configuration do
         Baboon.configuration.servers.should eq(['server_1', 'server_2'])
       end
     end
+    
+    context 'when multiple servers are assigned' do
+      it 'should return accordingly' do
+        # puts Baboon.configuration.servers.inspect
+      end
+    end
   end
 end

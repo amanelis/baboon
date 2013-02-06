@@ -51,6 +51,8 @@ module Baboon
       if File.exists?("config/initializers/baboon.rb")
         @configuration = Util.read_configuration("config/initializers/baboon.rb")
         
+        # configure the servers
+        
         Baboon.configure do |config|
           config.application  = @configuration[:application]
           config.repository   = @configuration[:repository]
@@ -58,7 +60,7 @@ module Baboon
           config.deploy_user  = @configuration[:deploy_user]
           config.branch       = @configuration[:branch]
           config.rails_env    = @configuration[:rails_env]
-          config.servers      = @configuration[:servers]
+          config.servers      = @configuration[:servers].gsub('[', '').gsub(']', '').split(',').collect(&:strip)
         end
       else
         #Error.stop("Baboon says there is no configuration file at: config/initializers/baboon.rb. Please run `rails g baboon:install`")
@@ -69,33 +71,41 @@ module Baboon
     
     desc "deploy", "Starts a real deploy to a server"
     def deploy
-      printf @logger.format(" == Baboon starting deploy", "32", 1)
+      printf @logger.format("== Baboon starting deploy", "32", 1)
       
-      # Essentially these are the instructions we need run for the Ubuntu 11.04
-      instructions = [
-        "cd #{Baboon.configuration.deploy_path} && bundle install",
-        "cd #{Baboon.configuration.deploy_path} && git fetch",
-        "cd #{Baboon.configuration.deploy_path} && git checkout #{Baboon.configuration.branch.to_s}",
-        "cd #{Baboon.configuration.deploy_path} && git merge origin/#{Baboon.configuration.branch.to_s}",
-        "cd #{Baboon.configuration.deploy_path} && touch tmp/restart.txt"
-      ]
+      # Loop through each server and do deploy, we will add threading later to do simultaneous deploys
+      Baboon.configuration.servers.each do |server|     
+        current = server.to_s.strip
+        
+        printf @logger.format("== [#{current}]", "35", 1) 
+        
+        # Essentially these are the instructions we need run for the Ubuntu 11.04 for rails
+        # TODO: add lib of different instruction sets for Play framework, nodejs, etc
+        instructions = [
+          "cd '#{Baboon.configuration.deploy_path}' && bundle install --deployment",
+          "cd '#{Baboon.configuration.deploy_path}' && git fetch",
+          "cd '#{Baboon.configuration.deploy_path}' && git checkout #{Baboon.configuration.branch.to_s}",
+          "cd '#{Baboon.configuration.deploy_path}' && git merge origin/#{Baboon.configuration.branch.to_s}",
+          "cd '#{Baboon.configuration.deploy_path}' && touch tmp/restart.txt"
+        ]
       
-      # Vars for connecting via ssh to the server
-      credentials = { 
-        user: Baboon.configuration.deploy_user.to_s, 
-        host: 'ec2-50-19-131-228.compute-1.amazonaws.com'
-      }
+        # Vars for connecting via ssh to the server
+        credentials = { 
+          user: Baboon.configuration.deploy_user.to_s, 
+          host: current
+        }
             
-      Net::SSH.start(credentials[:host], credentials[:user]) do |session|
-        instructions.each do |instruction|
-          puts "instruction executing: #{instruction}"
-          puts ""
-          session.exec instruction
-          session.loop
+        Net::SSH.start(credentials[:host], credentials[:user]) do |session|
+          instructions.each do |instruction|
+            puts "[#{current}]: #{instruction}"
+            puts ""
+            session.exec instruction
+            session.loop
+          end
         end
-      end
+      end # Looping servers
       
-      printf @logger.format(" == Baboon deploy Complete", "31", 1)
+      printf @logger.format("== Baboon deploy Complete", "31", 1)
     end
 
     desc "configuration", "Shows the current configuration for baboon"
@@ -107,6 +117,11 @@ module Baboon
       printf @logger.format("Baboon[Branch]: #{Baboon.configuration.branch}", "37", 1)
       printf @logger.format("Baboon[Rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
       printf @logger.format("Baboon[Servers]: #{Baboon.configuration.servers}", "37", 1)
+    end
+    
+    desc "servers", "Shows the current servers that will get deployed to"
+    def servers
+      printf @logger.format(Baboon.configuration.servers.inspect, "31", 1)
     end
 
     # desc "init", "Generates deployment customization scripts for your app"
