@@ -82,10 +82,10 @@ module Baboon
         # Essentially these are the instructions we need run for the Ubuntu 11.04 for rails
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
-          "cd '#{Baboon.configuration.deploy_path}' && bundle install --deployment",
           "cd '#{Baboon.configuration.deploy_path}' && git fetch",
           "cd '#{Baboon.configuration.deploy_path}' && git checkout #{Baboon.configuration.branch.to_s}",
           "cd '#{Baboon.configuration.deploy_path}' && git merge origin/#{Baboon.configuration.branch.to_s}",
+          "cd '#{Baboon.configuration.deploy_path}' && bundle install --deployment",
           "cd '#{Baboon.configuration.deploy_path}' && touch tmp/restart.txt"
         ]
       

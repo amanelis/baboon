@@ -90,6 +90,9 @@ Intial setup of the CLI and basic deploys are working.
 #### 1.0.5
 Multiple server deployments now work.
 
+#### 1.0.6
+Changed the order of bundle installing on Rails package
+
 ## How to contribute
  
 * Fork the project.
