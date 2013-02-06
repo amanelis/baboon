@@ -87,6 +87,9 @@ This is coming very soon…
 #### 1.0.0
 Intial setup of the CLI and basic deploys are working.
 
+#### 1.0.5
+Multiple server deployments now work.
+
 ## How to contribute
  
 * Fork the project.
