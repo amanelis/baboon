@@ -83,6 +83,10 @@ This is coming very soon…
 ## Issues
   None.
 
+## Changelog
+#### 1.0.0
+Intial setup of the CLI and basic deploys are working.
+
 ## How to contribute
  
 * Fork the project.
