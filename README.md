@@ -21,9 +21,7 @@ This must be installed under a current rails application. We recommend vendoring
 
 In your Gemfile, then `bundle install`.
 
-	group :development do
-	  gem 'baboon'
-	end
+	gem 'baboon'
 	
 Now that the gem is installed, run the config generator
 
