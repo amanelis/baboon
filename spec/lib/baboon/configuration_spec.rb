@@ -3,7 +3,15 @@ require 'spec_helper'
 describe Baboon::Configuration do
   describe 'configuration object should respond accordingly if not configured' do
     before do
-      Baboon.configure do |config|; end
+      Baboon.configure do |config|
+        config.application = nil
+        config.repository  = nil
+        config.deploy_path = nil
+        config.deploy_user = nil
+        config.branch      = nil
+        config.rails_env   = nil
+        config.servers     = nil
+      end
     end
     
     context 'when nothing is given for application' do
