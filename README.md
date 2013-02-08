@@ -93,7 +93,7 @@ Intial setup of the CLI and basic deploys are working.
 Multiple server deployments now work.
 
 #### 1.0.6
-Changed the order of bundle installing on Rails package
+Changed the order of bundle installing on Rails package. Wrote tests for CLI.
 
 ## How to contribute
  
