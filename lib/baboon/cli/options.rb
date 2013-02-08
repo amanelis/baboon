@@ -1,4 +1,5 @@
 require 'optparse'
+require 'baboon/version'
 
 module Baboon
   class CLI
@@ -20,9 +21,6 @@ module Baboon
       # The hash of (parsed) command-line options
       attr_reader :options
 
-      # Return an OptionParser instance that defines the acceptable command
-      # line switches for Capistrano, and what their corresponding behaviors
-      # are.
       def option_parser #:nodoc:
         @logger = Logger.new
         @option_parser ||= OptionParser.new do |opts|
@@ -58,13 +56,13 @@ module Baboon
 						"Choose logger method. STDERR used by default."
 					) do |value|
 						options[:output] = if value.nil? || value.upcase == 'STDERR'
-																 # Using default logger.
-																 nil
-															 elsif value.upcase == 'STDOUT'
-																 $stdout
-															 else
-																 value
-															 end
+							 # Using default logger.
+							 nil
+						 elsif value.upcase == 'STDOUT'
+							 $stdout
+						 else
+							 value
+						 end
 					end
 
           opts.on("-n", "--dry-run",
@@ -113,10 +111,10 @@ module Baboon
           ) { options[:tool] = true }
 
           opts.on("-V", "--version",
-            "Display the Capistrano version, and exit."
+            "Display the Baboon version, and exit."
           ) do
-            require 'capistrano/version'
-            puts "Capistrano v#{Capistrano::Version}"
+            require 'baboon/version'
+            puts "Baboon v#{Baboon::Version}"
             exit
           end
 
@@ -128,7 +126,7 @@ module Baboon
           end
 
           opts.on("-X", "--skip-system-config",
-            "Don't load the system config file (capistrano.conf)"
+            "Don't load the system config file (Baboon.configuration)"
           ) { options.delete(:sysconf) }
 
           opts.on("-x", "--skip-user-config",
@@ -199,7 +197,7 @@ module Baboon
       end
 
       def default_sysconf #:nodoc:
-        File.join(sysconf_directory, "capistrano.conf")
+        File.join(sysconf_directory, "Baboon.configuration")
       end
 
       def default_dotfile #:nodoc:

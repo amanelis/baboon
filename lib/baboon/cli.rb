@@ -2,12 +2,16 @@ require 'baboon'
 require 'baboon/configuration'
 require 'baboon/logger'
 
-require 'thor'
+require 'find'
 require 'net/ssh'
+require 'thor'
 
 module Baboon
   class Error
     class << self
+      # stop
+      # @param:
+      # @return: StandardError class, will halt execution of program
       def stop reason
         raise StandardError, reason
       end
@@ -16,6 +20,33 @@ module Baboon
   
   class Util
     class << self
+      # locate_file
+      # Will try and locate the baboon.rb file it it does not exist. Great method
+      # used especially for testing Baboon.
+      # @param:
+      # @return: String[file path, used to locate and initialize the configuration file]
+      def locate_file
+        config_file = nil
+        default_baboon_file_path = "config/initializers/baboon.rb"
+        if File.exists?(default_baboon_file_path)
+          config_file = default_baboon_file_path
+        else
+          Find.find('.') do |path|
+            if path.include?('baboon.rb') 
+              next unless File.open(path, &:readline).include?('Baboon.configure do |config|')
+              config_file = path
+              break
+            end
+          end
+        end
+        config_file
+      end
+      
+      # read_configuration
+      # This will attempt to read the configuration file, only need until after the file
+      # is found in the application.
+      # @param: String[file path, relative to the directory of the configuration]
+      # @return: Hash[configuration options in the config file, use these to set Baboon.configuration]
       def read_configuration(file)
         configuration = []
         line_number = 0
@@ -39,20 +70,25 @@ module Baboon
   end
   
   class Cli < Thor
-    attr_accessor :logger, :configuration
+    attr_accessor :logger, :configuration, :configuration_file
 
     def initialize(*args)
       super
+      $stdout.sync ||= true
       @logger ||= Logger.new({level: 3, disable_formatters: false})
+      @configuration_file = Util.locate_file
       
-      $stdout.sync = true
+      if @configuration_file.nil? 
+        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
+        printf @logger.format("USAGE: rails g baboon:install", "35", 1)
+        return
+      end
       
       # Load the users baboon configuration
-      if File.exists?("config/initializers/baboon.rb")
-        @configuration = Util.read_configuration("config/initializers/baboon.rb")
+      if File.exists?(@configuration_file)
+        @configuration = Util.read_configuration(@configuration_file)
         
         # configure the servers
-        
         Baboon.configure do |config|
           config.application  = @configuration[:application]
           config.repository   = @configuration[:repository]
@@ -61,16 +97,19 @@ module Baboon
           config.branch       = @configuration[:branch]
           config.rails_env    = @configuration[:rails_env]
           config.servers      = @configuration[:servers].gsub('[', '').gsub(']', '').split(',').collect(&:strip)
-        end
+        end      
       else
-        #Error.stop("Baboon says there is no configuration file at: config/initializers/baboon.rb. Please run `rails g baboon:install`")
         printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
         printf @logger.format("USAGE: rails g baboon:install", "35", 1) 
       end
     end
     
-    desc "deploy", "Starts a real deploy to a server"
+    desc "deploy", "Deploys the application to the configured servers."
     def deploy
+      unless File.exists?(@configuration_file)
+        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
+        printf @logger.format("USAGE: rails g baboon:install", "35", 1)
+      end
       printf @logger.format("== Baboon starting deploy", "32", 1)
       
       # Loop through each server and do deploy, we will add threading later to do simultaneous deploys
@@ -108,8 +147,13 @@ module Baboon
       printf @logger.format("== Baboon deploy Complete", "31", 1)
     end
 
-    desc "configuration", "Shows the current configuration for baboon"
+    desc "configuration", "Shows the current configuration for baboon."
     def configuration
+      unless File.exists?(@configuration_file)
+        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
+        printf @logger.format("USAGE: rails g baboon:install", "35", 1)
+      end
+      
       printf @logger.format("Baboon[Application]: #{Baboon.configuration.application}", "37", 1)
       printf @logger.format("Baboon[Repository]: #{Baboon.configuration.repository}", "37", 1)
       printf @logger.format("Baboon[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
@@ -118,46 +162,5 @@ module Baboon
       printf @logger.format("Baboon[Rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
       printf @logger.format("Baboon[Servers]: #{Baboon.configuration.servers}", "37", 1)
     end
-    
-    desc "servers", "Shows the current servers that will get deployed to"
-    def servers
-      printf @logger.format(Baboon.configuration.servers.inspect, "31", 1)
-    end
-
-    # desc "init", "Generates deployment customization scripts for your app"
-    # def init
-    #   require 'generators/baboon/install/intall_generator'
-    #   InstallGenerator::start([])
-    # end
-    # 
-    # desc "restart", "Restarts the application on the server"
-    # def restart
-    #   run "cd #{deploy_to} && deploy/restart | tee -a log/deploy.log"
-    # end
-    # 
-    # desc "rollback", "Rolls back the checkout to before the last push"
-    # def rollback
-    #   run "cd #{deploy_to} && git reset --hard ORIG_HEAD"
-    #   invoke :restart
-    # end
-    # 
-    # desc "log", "Shows the last part of the deploy log on the server"
-    # method_option :tail, :aliases => '-t', :type => :boolean, :default => false
-    # method_option :lines, :aliases => '-l', :type => :numeric, :default => 20
-    # def log(n = nil)
-    #   tail_args = options.tail? ? '-f' : "-n#{n || options.lines}"
-    #   run "tail #{tail_args} #{deploy_to}/log/deploy.log"
-    # end
-    # 
-    # desc "upload <files>", "Copy local files to the remote app"
-    # def upload(*files)
-    #   files = files.map { |f| Dir[f.strip] }.flatten
-    #   abort "Error: Specify at least one file to upload" if files.empty?
-    # 
-    #   scp_upload files.inject({}) { |all, file|
-    #     all[file] = File.join(deploy_to, file)
-    #     all
-    #   }
-    # end
   end
 end
