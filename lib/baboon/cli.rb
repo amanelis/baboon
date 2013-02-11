@@ -20,13 +20,21 @@ module Baboon
   
   class Util
     class << self
+      # file_check!
+      # @param: String file path
+      # @return: Boolean || String depending on if file is found
+      def file_check! file
+        return false if file.nil? || !file
+        
+      end
+      
       # locate_file
       # Will try and locate the baboon.rb file it it does not exist. Great method
       # used especially for testing Baboon.
       # @param:
       # @return: String[file path, used to locate and initialize the configuration file]
       def locate_file
-        config_file = nil
+        config_file = ''
         default_baboon_file_path = "config/initializers/baboon.rb"
         if File.exists?(default_baboon_file_path)
           config_file = default_baboon_file_path
@@ -70,22 +78,33 @@ module Baboon
   end
   
   class Cli < Thor
-    attr_accessor :logger, :configuration, :configuration_file
+    # @logger: call an instance of the logger class, use throughout baboon
+    # @configuration: holds the default baboon configuration set in config file
+    # @configuration_file: the exact file location of baboon configuration
+    attr_accessor :logger, :configuration, :configuration_file, :block
 
+    # initialize
+    # @param: Array
+    # @ereturn: instance
     def initialize(*args)
       super
       $stdout.sync ||= true
       @logger ||= Logger.new({level: 3, disable_formatters: false})
+      
+      # Attempt to locate the configuration file in the project if it was not set.
       @configuration_file = Util.locate_file
       
-      if @configuration_file.nil? 
-        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
-        printf @logger.format("USAGE: rails g baboon:install", "35", 1)
+      # Return if file not found
+      if @configuration_file.nil? ||  @configuration_file == ''
+        printf "\033[22;31mB\033[22;35ma\033[22;36mb\033[22;32mo\033[01;31mo\033[01;33mn\033[22;37m - version #{Baboon::VERSION}\n"
+        printf "  \033[22;31mError:\033[22;37m no configuration file is present anywhere in the application or at config/initializers/baboon.rb\n"
+        printf "  \033[01;32mUsage:\033[22;37m rails g baboon:install\n"
+        @block = true
         return
       end
       
       # Load the users baboon configuration
-      if File.exists?(@configuration_file)
+      if File.exists?(@configuration_file) # tad redundant
         @configuration = Util.read_configuration(@configuration_file)
         
         # configure the servers
@@ -99,17 +118,17 @@ module Baboon
           config.servers      = @configuration[:servers].gsub('[', '').gsub(']', '').split(',').collect(&:strip)
         end      
       else
-        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
-        printf @logger.format("USAGE: rails g baboon:install", "35", 1) 
+        printf "\033[22;31mB\033[22;35mA\033[22;36mB\033[22;32mO\033[01;31mO\033[01;33mN\033[22;37m - version #{Baboon::VERSION}\n"
+        printf "  \033[22;31mError:\033[22;37m no configuration file is present anywhere in the application or at config/initializers/baboon.rb\n"
+        printf "  \033[01;32mUsage:\033[22;37m rails g baboon:install\n"
+        @block = true
+        return
       end
     end
     
     desc "deploy", "Deploys the application to the configured servers."
     def deploy
-      unless File.exists?(@configuration_file)
-        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
-        printf @logger.format("USAGE: rails g baboon:install", "35", 1)
-      end
+      return if @block
       printf @logger.format("== Baboon starting deploy", "32", 1)
       
       # Loop through each server and do deploy, we will add threading later to do simultaneous deploys
@@ -136,8 +155,7 @@ module Baboon
             
         Net::SSH.start(credentials[:host], credentials[:user]) do |session|
           instructions.each do |instruction|
-            puts "[#{current}]: #{instruction}"
-            puts ""
+            printf "[#{current}]: #{instruction}\n"
             session.exec instruction
             session.loop
           end
@@ -148,12 +166,8 @@ module Baboon
     end
 
     desc "configuration", "Shows the current configuration for baboon."
-    def configuration
-      unless File.exists?(@configuration_file)
-        printf @logger.format("Baboon says there is no configuration file at config/initializers/baboon.rb, run the following command", "31", 1)
-        printf @logger.format("USAGE: rails g baboon:install", "35", 1)
-      end
-      
+    def configuration    
+      return if @block  
       printf @logger.format("Baboon[Application]: #{Baboon.configuration.application}", "37", 1)
       printf @logger.format("Baboon[Repository]: #{Baboon.configuration.repository}", "37", 1)
       printf @logger.format("Baboon[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
