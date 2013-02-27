@@ -25,7 +25,6 @@ module Baboon
       # @return: Boolean || String depending on if file is found
       def file_check! file
         return false if file.nil? || !file
-        
       end
       
       # locate_file
@@ -81,7 +80,7 @@ module Baboon
     # @logger: call an instance of the logger class, use throughout baboon
     # @configuration: holds the default baboon configuration set in config file
     # @configuration_file: the exact file location of baboon configuration
-    attr_accessor :logger, :configuration, :configuration_file, :block
+    attr_accessor :logger, :configuration, :configuration_file, :stop
 
     # initialize
     # @param: Array
@@ -96,10 +95,10 @@ module Baboon
       
       # Return if file not found
       if @configuration_file.nil? ||  @configuration_file == ''
-        printf "\033[22;31mB\033[22;35ma\033[22;36mb\033[22;32mo\033[01;31mo\033[01;33mn\033[22;37m - version #{Baboon::VERSION}\n"
+        printf "#{BABOON_TITLE}\n"
         printf "  \033[22;31mError:\033[22;37m no configuration file is present anywhere in the application or at config/initializers/baboon.rb\n"
         printf "  \033[01;32mUsage:\033[22;37m rails g baboon:install\n"
-        @block = true
+        @stop = true
         return
       end
       
@@ -118,25 +117,22 @@ module Baboon
           config.servers      = @configuration[:servers].gsub('[', '').gsub(']', '').split(',').collect(&:strip)
         end      
       else
-        printf "\033[22;31mB\033[22;35mA\033[22;36mB\033[22;32mO\033[01;31mO\033[01;33mN\033[22;37m - version #{Baboon::VERSION}\n"
+        printf "#{BABOON_TITLE}\n"
         printf "  \033[22;31mError:\033[22;37m no configuration file is present anywhere in the application or at config/initializers/baboon.rb\n"
         printf "  \033[01;32mUsage:\033[22;37m rails g baboon:install\n"
-        @block = true
+        @stop = true
         return
       end
     end
     
     desc "deploy", "Deploys the application to the configured servers."
     def deploy
-      return if @block
-      printf @logger.format("== Baboon starting deploy", "32", 1)
-      
+      return if @stop      
+            
       # Loop through each server and do deploy, we will add threading later to do simultaneous deploys
       Baboon.configuration.servers.each do |server|     
-        current = server.to_s.strip
-        
-        printf @logger.format("== [#{current}]", "35", 1) 
-        
+        host = server.to_s.strip
+              
         # Essentially these are the instructions we need run for the Ubuntu 11.04 for rails
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
@@ -150,31 +146,30 @@ module Baboon
         # Vars for connecting via ssh to the server
         credentials = { 
           user: Baboon.configuration.deploy_user.to_s, 
-          host: current
+          host: host
         }
             
         Net::SSH.start(credentials[:host], credentials[:user]) do |session|
           instructions.each do |instruction|
-            printf "[#{current}]: #{instruction}\n"
+            printf "[#{host}]: #{instruction}\n"
             session.exec instruction
             session.loop
           end
         end
-      end # Looping servers
-      
-      printf @logger.format("== Baboon deploy Complete", "31", 1)
-    end
+      end # Looping servers      
+    end # def deploy
 
     desc "configuration", "Shows the current configuration for baboon."
     def configuration    
-      return if @block  
-      printf @logger.format("Baboon[Application]: #{Baboon.configuration.application}", "37", 1)
-      printf @logger.format("Baboon[Repository]: #{Baboon.configuration.repository}", "37", 1)
-      printf @logger.format("Baboon[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
-      printf @logger.format("Baboon[Deploy_user]: #{Baboon.configuration.deploy_user}", "37", 1)
-      printf @logger.format("Baboon[Branch]: #{Baboon.configuration.branch}", "37", 1)
-      printf @logger.format("Baboon[Rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
-      printf @logger.format("Baboon[Servers]: #{Baboon.configuration.servers}", "37", 1)
+      return if @stop
+      
+      printf @logger.format("#{BABOON_TITLE}[Application]: #{Baboon.configuration.application}", "37", 1)
+      printf @logger.format("#{BABOON_TITLE}[Repository]: #{Baboon.configuration.repository}", "37", 1)
+      printf @logger.format("#{BABOON_TITLE}[Deploy_path]: #{Baboon.configuration.deploy_path}", "37", 1)
+      printf @logger.format("#{BABOON_TITLE}[Deploy_user]: #{Baboon.configuration.deploy_user}", "37", 1)
+      printf @logger.format("#{BABOON_TITLE}[Branch]: #{Baboon.configuration.branch}", "37", 1)
+      printf @logger.format("#{BABOON_TITLE}[Rails_env]: #{Baboon.configuration.rails_env}", "37", 1)
+      printf @logger.format("#{BABOON_TITLE}[Servers]: #{Baboon.configuration.servers}", "37", 1)
     end
   end
 end

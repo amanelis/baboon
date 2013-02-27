@@ -22,6 +22,8 @@ BABOON_CONFIGURATION_OPTIONS = [
   :servers            # => An array of servers baboon will push to
 ]
 
+BABOON_TITLE = "\033[22;31mB\033[22;35ma\033[22;36mb\033[22;32mo\033[01;31mo\033[01;33mn\033[22;37m"
+
 require 'baboon/configuration'
 require 'baboon/cli'
 require 'baboon/logger'
