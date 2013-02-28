@@ -3,14 +3,11 @@ require 'rails/generators/base'
 module Baboon
   module Generators
     class InstallGenerator < Rails::Generators::Base
-      desc 'Creates an initializer for Baboon at config/initializers/baboon.rb'
-
-      def self.source_root
-        @source_root ||= File.expand_path(File.join(File.dirname(__FILE__), 'templates'))
-      end
-
+      desc 'Creates an initializer for Baboon at config/baboon.yml'
+      source_root File.expand_path('../templates', __FILE__)
+      
       def create_initializer_file
-        template "baboon.rb", "config/initializers/baboon.rb"
+        template 'baboon.yml', 'config/baboon.yml'
       end
     end
   end

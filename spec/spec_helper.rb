@@ -11,8 +11,6 @@ Dir["spec/support/**/*.rb"].each { |f| require f }
 PROJECT_ROOT = File.expand_path('../..', __FILE__)
 $LOAD_PATH << File.join(PROJECT_ROOT, 'lib')
 
-$:.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
-
 RSpec.configure do |config|
   config.color_enabled = true
   config.tty = true

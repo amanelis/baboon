@@ -1,0 +1,52 @@
+baboon:
+  # Give you application a descriptive name, has no effect on the actual
+  # running path or location of your application. Can be different then
+  # what is stored in your scm.
+  application:  'Vacuum HQ'
+
+  # For now, Baboon will determine what scm the remote code is stored in
+  # based on the scm path. For now, GIT and SVN are the two supported 
+  # scm applications that are supported.
+  repository:   'git@github.com:amanelis/vacuum.git'
+
+  # Pass multiple environments in this section. When running a standard
+  # 'baboon deploy' all defined hosts here will be deployed to. You can
+  # specify which host you want to deploy to by typing that as a param
+  # in the command 'baboon deploy development'.
+  environments:
+    # Name each environment to your own standard. Baboon, will use the 
+    # settings defined after the env to to the deploy.
+    staging:
+      # Branch that the baboon will merge code in from the remote scm
+      # baboon['repository'] url that is defined in this file.
+      branch: 'staging'
+
+      # This is the actual path on the server where the root of the 
+      # application is stored, not where /public is in terms of a rails
+      # setup.
+      deploy_path: '/home/rails/vacuum'
+ 
+      # This is the actual user that baboon will use for SSH authentication
+      # into the servers that are defined here. 
+      deploy_user: 'rails'
+
+      # Env that we will run all rake/bundler commands with.
+      rails_env: 'staging'
+
+      # These are the host machines that baboon will ssh into on each deploy.
+      # They can be defined as an ip address or a host name
+      servers:
+        - '127.0.0.1'
+        - '127.0.0.2'
+          
+    # You can define as many different environments as needed to your application
+    production:
+      branch: 'production'
+      deploy_path: '/home/rails/vacuum'
+      deploy_user: 'rails'
+      rails_env: 'production'
+      servers:
+        - '10.0.0.1'
+        - '10.0.0.2'
+        - '10.0.0.3'
+        - 'production.node1.east.com'
