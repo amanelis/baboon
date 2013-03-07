@@ -1,7 +1,23 @@
 require 'spec_helper'
 
 describe Baboon do
-  it "should have a valid CONFIGURATION HASH" do
-    BABOON_CONFIGURATION_OPTIONS.should_not be_nil
+  context 'application constants' do
+    context 'title' do
+      subject {
+        BABOON_TITLE
+      }
+      
+      it { should_not be_nil }
+      it { expect(subject).to eq("\033[22;31mB\033[22;35ma\033[22;36mb\033[22;32mo\033[01;31mo\033[01;33mn\033[22;37m") }
+    end
+    
+    context 'environment settings' do
+      subject {
+        BABOON_ENVIRONMENT_SETTINGS
+      }
+      
+      it { should_not be_nil }
+      it { expect(subject).to eq(['branch', 'deploy_path', 'deploy_user', 'rails_env', 'servers']) }
+    end
   end
 end
