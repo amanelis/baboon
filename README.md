@@ -1,10 +1,10 @@
-# Baboon
+# Baboon - simple rails deployment.
 ![cardinal](https://alexweb.s3.amazonaws.com/baboon.png)
+
+A simple and light weight deployment library for a ruby on rails application 3.0+. No symlinks, no releases, just git and your application. 
 
 [![Build Status](https://secure.travis-ci.org/amanelis/baboon.png)](http://travis-ci.org/amanelis/baboon)
 [![Dependency Status](https://gemnasium.com/amanelis/baboon.png)](https://gemnasium.com/amanelis/baboon)
-
-A simple and light weight deployment library for a ruby on rails application 3.0+. No symlinks, no releases, just git and your application. 
 
 
 # How it works
