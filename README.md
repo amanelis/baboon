@@ -138,6 +138,9 @@ Multiple server deployments now work.
 #### 1.0.6
 Changed the order of bundle installing on Rails package. Wrote tests for CLI.
 
+#### 1.0.9
+Removed ruby configuration and added configuration by `config/baboon.yml`.
+
 ## Thanks
 I'd like to thank Enrique Ruiz Davila for making the beautiful [Baboon](http://www.behance.net/davila) image. 
 
