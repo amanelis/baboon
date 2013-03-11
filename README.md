@@ -1,5 +1,5 @@
 # Baboon
-![cardinal](https://alexweb.s3.amazonaws.com/baboon.jpeg)
+![cardinal](https://alexweb.s3.amazonaws.com/baboon.png)
 
 [![Build Status](https://secure.travis-ci.org/amanelis/baboon.png)](http://travis-ci.org/amanelis/baboon)
 [![Dependency Status](https://gemnasium.com/amanelis/baboon.png)](https://gemnasium.com/amanelis/baboon)
@@ -27,17 +27,60 @@ Now that the gem is installed, run the config generator
 
 	$ rails g baboon:install
 
-This will build a file into your application under `config/initializers/baboon.rb`. Open this file and start editing. Here is an example of the main configuration options:
+This will build a file into your application under `config/baboon.yml`. Open this file and start editing. Here is an example of the main configuration options:
 
-	Baboon.configure do |config|
-  	  config.application  = 'Vacuum HQ'
-	  config.repository   = 'git@github.com:amanelis/vacuum.git'
-	  config.deploy_path  = '/home/rails/vacuum'
-	  config.deploy_user  = 'rails
-	  config.branch       = 'master'
-	  config.rails_env    = 'production'
-	  config.servers      = ['192.168.1.1', '192.168.1.2']
-	end
+	baboon:
+	  # Give you application a descriptive name, has no effect on the actual
+	  # running path or location of your application. Can be different then
+	  # what is stored in your scm.
+	  application:  'Vacuum HQ'
+	
+	  # For now, Baboon will determine what scm the remote code is stored in
+	  # based on the scm path. For now, GIT and SVN are the two supported 
+	  # scm applications that are supported.
+	  repository:   'git@github.com:amanelis/vacuum.git'
+	
+	  # Pass multiple environments in this section. When running a standard
+	  # 'baboon deploy' all defined hosts here will be deployed to. You can
+	  # specify which host you want to deploy to by typing that as a param
+	  # in the command 'baboon deploy development'.
+	  environments:
+	    # Name each environment to your own standard. Baboon, will use the 
+	    # settings defined after the env to to the deploy.
+	    staging:
+	      # Branch that the baboon will merge code in from the remote scm
+	      # baboon['repository'] url that is defined in this file.
+	      branch: 'staging'
+	
+	      # This is the actual path on the server where the root of the 
+	      # application is stored, not where /public is in terms of a rails
+	      # setup.
+	      deploy_path: '/home/rails/vacuum'
+	 
+	      # This is the actual user that baboon will use for SSH authentication
+	      # into the servers that are defined here. 
+	      deploy_user: 'rails'
+	
+	      # Env that we will run all rake/bundler commands with.
+	      rails_env: 'staging'
+	
+	      # These are the host machines that baboon will ssh into on each deploy.
+	      # They can be defined as an ip address or a host name
+	      servers:
+	        - '127.0.0.1'
+	        - '127.0.0.2'
+	          
+	    # You can define as many different environments as needed to your application
+	    production:
+	      branch: 'production'
+	      deploy_path: '/home/rails/vacuum'
+	      deploy_user: 'rails'
+	      rails_env: 'production'
+	      servers:
+	        - '10.0.0.1'
+	        - '10.0.0.2'
+	        - '10.0.0.3'
+	        - 'production.node1.east.com'
 	
 These must be properly filled out so baboon can properly make deploys.
 
@@ -59,7 +102,7 @@ Thats it? Yeah, thats it! You should see your bundle installing and Baboon runni
 
 The next commands that will be realeased with future versions of baboon are:
 
-  baboon setup    # no manually editing of configuration file
+  	baboon setup    	# no manually editing of configuration file
 	baboon check 		# checks the server and config file for proper configuration
 	baboon migrate 		# runs pending migrations
 	baboon restart 		# restarts your server
@@ -94,6 +137,9 @@ Multiple server deployments now work.
 
 #### 1.0.6
 Changed the order of bundle installing on Rails package. Wrote tests for CLI.
+
+## Thanks
+I'd like to thank Enrique Ruiz Davila for making the beautiful [Baboon](http://www.behance.net/davila) image. 
 
 ## How to contribute
  
