@@ -82,7 +82,7 @@ This will build a file into your application under `config/baboon.yml`. Open thi
 	        - '10.0.0.3'
 	        - 'production.node1.east.com'
 	
-These must be properly filled out so baboon can properly make deploys. One single environment always has a `branch` that baboon will now what code to pull from. It will assume the `repository` from the root node. For the environment, baboon will need to know what user to login as via the `deploy_user` and where to cd to via the `deploy_path`. Once it knows the location of the app, baboon will need to know what env to run as, hence the `rails_env` setting. The last option is the `servers` collection. Fill as many servers as you would like and baboon, will deploy to as many as possible. Asynchronous is the next option we would like to add.
+These must be properly filled out so baboon can properly make deploys. One single environment always has a `branch` that baboon will know where to pull the deployable code from. It will assume the `repository` from the root node. For the environment, baboon will need to know what user to login as via the `deploy_user` and where to cd to via the `deploy_path`. Once it knows the location of the app, baboon will need to know what env to run as, hence the `rails_env` setting. The last option is the `servers` collection. Fill as many servers as you would like and baboon will deploy to all for the given env. Asynchronous is the next option we would like to add.
 
 ---
 # Commands
