@@ -90,26 +90,31 @@ Once everything is setup you can run `baboon` to see available commands. Start b
 
 	$ baboon configuration
 	
-Once you see and verify your Baboon.configuration you can now go ahead and test a deploy. For now, lets assume you have everything in your config correct and you are deploying to production, run the following command to do a cold deploy:
+For now, lets assume you have everything in your config correct and you are deploying to production, run the following command to do a deploy:
 
-	$ baboon deploy
+	$ baboon deploy production
+	
+Any other deploy to a different env that you specify in your config file can be done as follows:
+
+	$ baboon deploy {environment}
 	
 To view the available servers you have setup in your config file, the following command will tell you which servers are set to be deploy to:
 
-	$ baboon servers
+	$ baboon servers production
 	
 Thats it? Yeah, thats it! You should see your bundle installing and Baboon running all tasks. Custom tasks coming soon.
 
 The next commands that will be realeased with future versions of baboon are:
 
-  	baboon setup    	# no manually editing of configuration file
-	baboon check 		# checks the server and config file for proper configuration
-	baboon migrate 		# runs pending migrations
-	baboon restart 		# restarts your server
-	baboon rollback 	# rolls back your to your previous commit, info in ./log/baboon.log
-	baboon rake 		# run custom rake tasks on server
-	baboon execute 		# run a single command on the server
-	baboon shell	 	# open a remote shell with the config user
+
+  	baboon setup    		# no manually editing of configuration file
+	baboon check 		    # checks the server and config file for proper configuration
+	baboon migrate 		  	# runs pending migrations
+	baboon restart 		  	# restarts your server
+	baboon rollback 	  	# rolls back your to your previous commit, info in ./log/baboon.log
+	baboon rake 			# run custom rake tasks on server
+	baboon execute 			# run a single command on the server
+	baboon shell	 		# open a remote shell with the config user
 
 ---
 # CLI
