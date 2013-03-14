@@ -17,7 +17,7 @@ module Baboon
     # initialize
     # @param: Array
     # @ereturn: instance
-    def initialize(*args)
+    def initialize *args
       super
       $stdout.sync ||= true
       
