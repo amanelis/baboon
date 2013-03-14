@@ -121,11 +121,6 @@ The next commands that will be realeased with future versions of baboon are:
 	baboon execute 			# run a single command on the server
 	baboon shell	 		# open a remote shell with the config user
 
----
-# CLI
-
-This is coming very soon…
-
 
 ---
 ## Dependencies
