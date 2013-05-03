@@ -50,7 +50,7 @@ baboon:
   environments:
     # Name each environment to your own standard. Baboon, will use the 
     # settings defined after the env to to the deploy. This environment 
-    # is named 'stating' -> baboon deploy staging
+    # is named 'staging' -> baboon deploy staging
     staging:
       # This is the branch from your scm that Baboon will pull and merge 
       # code from. The repository is defined in the root node of this 
