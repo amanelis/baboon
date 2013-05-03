@@ -78,7 +78,7 @@ baboon:
           
     # You can define as many different environments as needed. 
     production:
-      branch: 'production'
+      branch: 'master'
       deploy_path: '/home/rails/vacuum'
       deploy_user: 'rails'
       rails_env: 'production'
