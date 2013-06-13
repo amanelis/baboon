@@ -79,6 +79,7 @@ module Baboon
       # Loop through the servers
       current_environment_configuration['servers'].each do |host|
         printf "Deploying[#{host}]"
+        printf ""
         
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
