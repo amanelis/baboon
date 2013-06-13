@@ -9,6 +9,9 @@ require 'yaml'
 
 module Baboon  
   class Cli < Thor
+    # Name the package output
+    package_name "Baboon"
+    
     # @logger: call an instance of the logger class, use throughout baboon
     # @configuration: holds the default baboon configuration set in config file
     # @configuration_file: the exact file location of baboon configuration
