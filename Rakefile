@@ -2,9 +2,9 @@
 
 directory '.'
 task :dgem do
-  sh 'rm *.gem'
+  system 'rm *.gem'
 end
 
 task :bgem do
-  sh 'gem build *.gemspec'
+  system 'gem build *.gemspec'
 end
