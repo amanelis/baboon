@@ -1,7 +1,9 @@
 module Baboon
   module Instructions
-    class Rails
-      
+    class JavaPlay
+    end
+    
+    class RubyOnRails
     end
   end
 end

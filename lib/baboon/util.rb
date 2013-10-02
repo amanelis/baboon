@@ -8,14 +8,14 @@ module Baboon
         return false if file.nil? || !file
       end
       
-      # locate_file
+      # locate_baboon_configuration_file
       # Will try and locate the baboon.rb file it it does not exist. Great method
       # used especially for testing Baboon.
       # @param:
       # @return: String[file path, used to locate and initialize the configuration file]
-      def locate_file
-        config_file = ''
-        default_baboon_file_path = "config/baboon.yml"
+      def locate_baboon_configuration_file
+        config_file = nil
+        default_baboon_file_path = 'config/baboon.yml'
         if File.exists?(default_baboon_file_path)
           config_file = default_baboon_file_path
         else

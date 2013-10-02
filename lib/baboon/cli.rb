@@ -1,5 +1,4 @@
 require 'baboon'
-require 'baboon/configuration'
 require 'baboon/util'
 
 require 'find'
@@ -12,14 +11,13 @@ module Baboon
     # Name the package output
     package_name "Baboon"
     
-    # @logger: call an instance of the logger class, use throughout baboon
     # @configuration: holds the default baboon configuration set in config file
     # @configuration_file: the exact file location of baboon configuration
-    attr_accessor :configuration, :configuration_file, :stop
+    attr_accessor :configuration, :configuration_file, :errors, :stop
 
     # initialize
     # @param: Array
-    # @ereturn: instance
+    # @return: instance
     def initialize *args
       super
       $stdout.sync ||= true
@@ -27,14 +25,18 @@ module Baboon
       # Set our yaml engine
       YAML::ENGINE.yamler = 'syck'
       
-      # Attempt to locate the configuration file in the project if it was not set.
-      @configuration_file = Util.locate_file
+      # Store any errors here during the process so they can be printed to STDOUT
+      @errors = []
+      
+      # Attempt to locate the configuration file in the project if it was not set. 
+      @configuration_file = Util.locate_baboon_configuration_file
       
       # Return if file not found
-      if @configuration_file.nil? ||  @configuration_file == ''
+      if @configuration_file.nil?
         printf "#{BABOON_TITLE}\n"
         printf "  \033[22;31mError:\033[22;37m no configuration file is present anywhere in the application or at config/baboon.yml\n"
         printf "  \033[01;32mUsage:\033[22;37m rails g baboon:install\n"
+        errors << "#initialize: failed to load a valid configuration file, please be sure a proper one is created at config/baboon.yml"
         @stop = true  
         return
       end
@@ -53,6 +55,7 @@ module Baboon
             printf "#{BABOON_TITLE}\n"
             printf "  \033[22;31mError:\033[22;37m incorrect settings for the \"#{key}\" in config/baboon.yml\n"
             printf "  \033[01;32mUsage:\033[22;37m rails g baboon:install\n"
+            errors << "#initialize: incorrect key:val [#{key}:#{k}] pair in config/baboon.yml"
             @stop = true
             return
           end
@@ -60,7 +63,7 @@ module Baboon
       end
     end
     
-    desc "deploy ENVIRONMENT", "Deploys the application to the configured servers."
+    desc "deploy [ENVIRONMENT]", "Deploys the application to the configured servers via ssh."
     def deploy environment
       return if @stop   
       
@@ -69,6 +72,7 @@ module Baboon
         printf "#{BABOON_TITLE}\n"
         printf "  \033[22;31mError:\033[22;37m looks like you typed an incorrect key for an environment you specified in your baboon.yml file\n"
         printf "  \033[01;32mUsage:\033[22;37m try one of these #{@configuration['baboon']['environments'].keys}\n"
+        errors << "#deploy: missing {environment} key inside of config/baboon.yml - you need at least 1 environment to deploy."
         @stop = true
         return
       end
@@ -105,12 +109,22 @@ module Baboon
           end
         end
       end   
-    end # def deploy
-
+    end 
+    
+    desc "rollback", "Rollsback the application to a given state via ssh."
+    def rollback environment
+      puts "Rolling bak"
+    end
+    
     desc "configuration", "Shows the current configuration for baboon."
     def configuration    
       return if @stop
       puts @configuration.inspect
+    end
+    
+    desc "version", "Shows the version of Baboon."
+    def version
+      puts Baboon::VERSION
     end
   end
 end
