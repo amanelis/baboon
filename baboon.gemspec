@@ -7,21 +7,21 @@ Gem::Specification.new do |s|
   s.executables   = %w[ baboon ]
   s.license       = 'MIT'
   s.homepage      = 'https://github.com/amanelis/baboon'
-  
+
   s.authors       = ['Alex Manelis']
   s.email         = ['amanelis@gmail.com']
   s.description   = %q{A lite deployment package for rails applications.}
   s.summary       = %q{Add a configuration file, setup and deploy.}
-  
+
   s.files = Dir['Rakefile', '{bin,lib,spec}/**/*', 'README*'] & `git ls-files`.split("\n")
 
   s.require_paths = ['lib']
   s.rubyforge_project = 'baboon'
-  
-  s.add_dependency 'thor', '0.18.1'
+
+  s.add_dependency 'thor'
   s.add_dependency 'net-ssh'
   s.add_dependency 'net-scp'
-  
+
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rails'
   s.add_development_dependency 'rspec'
