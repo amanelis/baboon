@@ -5,9 +5,9 @@ module Baboon
       # @param: String file path
       # @return: Boolean || String depending on if file is found
       def file_check! file
-        return false if file.nil? || !file
+        file.nil? || !file ? false : true
       end
-      
+
       # locate_baboon_configuration_file
       # Will try and locate the baboon.rb file it it does not exist. Great method
       # used especially for testing Baboon.
@@ -20,14 +20,14 @@ module Baboon
           config_file = default_baboon_file_path
         else
           Find.find('.') do |path|
-            if path.include?('baboon.yml') 
+            if path.include?('baboon.yml')
               config_file = path
               break
             end
           end
         end
         config_file
-      end 
+      end
     end # class << self
   end # class Util
 end # module Baboon
