@@ -1,10 +1,10 @@
-require 'coveralls'
-Coveralls.wear!
-
 require 'simplecov'
 SimpleCov.start do
   add_group 'Baboon', 'lib/'
 end
+
+# require 'coveralls'
+# Coveralls.wear!
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../lib/baboon', __FILE__)
@@ -21,10 +21,10 @@ RSpec.configure do |config|
   config.color_enabled = true
   config.tty = true
   config.mock_with :rspec
-  
+
   # Configure devise to work for authentication
   config.include WebMock::API
-  
+
   # Capybara for integrations
   config.include Capybara::DSL
 
@@ -44,7 +44,7 @@ RSpec.configure do |config|
   config.before(:each, :network => true) do
     WebMock.disable!
   end
-  
+
   config.before(:each) do
     ARGV.clear
     $stdout.sync ||= true
