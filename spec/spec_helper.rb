@@ -3,8 +3,11 @@ SimpleCov.start do
   add_group 'Baboon', 'lib/'
 end
 
-# require 'coveralls'
-# Coveralls.wear!
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
+require 'coveralls'
+Coveralls.wear!
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../lib/baboon', __FILE__)
