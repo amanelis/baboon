@@ -3,11 +3,8 @@ SimpleCov.start do
   add_group 'Baboon', 'lib/'
 end
 
-require "codeclimate-test-reporter"
-CodeClimate::TestReporter.start if ENV['CODECLIMATE_REPO_TOKEN']
-
-require 'coveralls'
-Coveralls.wear!
+require 'yaml'
+YAML::ENGINE.yamler = 'psych'
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../lib/baboon', __FILE__)
