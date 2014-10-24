@@ -18,7 +18,7 @@ require 'webmock/rspec'
 require 'capybara/rspec'
 
 RSpec.configure do |config|
-  config.color_enabled = true
+  #config.color_enabled = true
   config.tty = true
   config.mock_with :rspec
 
