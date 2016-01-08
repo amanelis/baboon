@@ -87,9 +87,14 @@ module Baboon
           "cd '#{current_environment_configuration['deploy_path']}' && git fetch",
           "cd '#{current_environment_configuration['deploy_path']}' && git checkout #{current_environment_configuration['branch']}",
           "cd '#{current_environment_configuration['deploy_path']}' && git merge origin/#{current_environment_configuration['branch']}",
-          "cd '#{current_environment_configuration['deploy_path']}' && bundle install --deployment",
-          "cd '#{current_environment_configuration['deploy_path']}' && touch tmp/restart.txt"
+          "cd '#{current_environment_configuration['deploy_path']}' && bundle install --deployment --without development test"
         ]
+
+        if current_environment_configuration.has_key?('restart_command') && !current_environment_configuration['restart_command'].nil?
+          instructions << current_environment_configuration['restart_command']
+        else
+          instructions << "cd '#{current_environment_configuration['deploy_path']}' && touch tmp/restart.txt"
+        end
 
         # Vars for connecting via ssh to the server
         credentials = {
