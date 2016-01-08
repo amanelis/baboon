@@ -22,9 +22,6 @@ module Baboon
       super
       $stdout.sync ||= true
 
-      # Set our yaml engine
-      YAML::ENGINE.yamler = 'syck'
-
       # Store any errors here during the process so they can be printed to STDOUT
       @errors = []
 

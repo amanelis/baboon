@@ -12,5 +12,3 @@ BABOON_ENVIRONMENT_SETTINGS = ['branch', 'deploy_path', 'deploy_user', 'rails_en
 require 'baboon/cli'
 require 'baboon/version'
 require 'yaml'
-
-YAML::ENGINE.yamler = 'psych'
