@@ -104,7 +104,7 @@ module Baboon
         }
 
         # Start the connection and excute command
-        Net::SSH.start(credentials[:host], credentials[:user]) do |ssh|
+        Net::SSH::start(credentials[:host], credentials[:user]) do |ssh|
           ssh.shell do |sh|
             instructions.each do |instruction|
               sh.execute instruction
