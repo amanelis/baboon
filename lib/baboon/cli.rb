@@ -84,6 +84,7 @@ module Baboon
 
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
+          "source ~/.bashrc",
           "cd '#{current_environment_configuration['deploy_path']}' && git fetch",
           "cd '#{current_environment_configuration['deploy_path']}' && git checkout #{current_environment_configuration['branch']}",
           "cd '#{current_environment_configuration['deploy_path']}' && git merge origin/#{current_environment_configuration['branch']}",
