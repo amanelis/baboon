@@ -1,6 +1,7 @@
 require 'baboon'
 require 'baboon/util'
 
+require 'net/ssh'
 require 'net/ssh/session'
 require 'find'
 require 'thor'

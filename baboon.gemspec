@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'thor'
   s.add_dependency 'net-ssh'
-  s.add_dependency 'net-ssh-shell'
+  #s.add_dependency 'net-ssh-shell', git: 'git://github.com/sosedoff/net-ssh-session.git'
   s.add_dependency 'codeclimate-test-reporter'
 
   s.add_development_dependency 'rake'
