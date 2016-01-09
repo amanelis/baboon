@@ -111,7 +111,7 @@ module Baboon
         # Execute commands
         session.run_multiple(instructions) do |cmd|
           printf "[\033[36m#{host}\033[0m]: #{cmd}\n"
-          printf "  \e[0;33m#{result.output}\033[0m"
+          printf "  \e[0;33m#{cmd.output}\033[0m"
         end
 
         # Close and exit the session
