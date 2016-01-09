@@ -110,7 +110,7 @@ module Baboon
       
         # Execute commands
         session.run_multiple(instructions) do |cmd|
-          printf "[\033[36m#{host}\033[0m]: #{instruction}\n"
+          printf "[\033[36m#{host}\033[0m]: #{cmd}\n"
           printf "  \e[0;33m#{result.output}\033[0m"
         end
 
