@@ -87,7 +87,9 @@ module Baboon
           "cd '#{current_environment_configuration['deploy_path']}' && git fetch",
           "cd '#{current_environment_configuration['deploy_path']}' && git checkout #{current_environment_configuration['branch']}",
           "cd '#{current_environment_configuration['deploy_path']}' && git merge origin/#{current_environment_configuration['branch']}",
-          "cd '#{current_environment_configuration['deploy_path']}' && bundle install --deployment --without development test"
+          "cd '#{current_environment_configuration['deploy_path']}' && RAILS_ENV=#{current_environment_configuration['rails_env']} bundle install --deployment --without development test",
+          "cd '#{current_environment_configuration['deploy_path']}' && RAILS_ENV=#{current_environment_configuration['rails_env']} bundle exec rake assets:precompile",
+          "cd '#{current_environment_configuration['deploy_path']}' && bundle exec rake db:migrate"
         ]
 
         if current_environment_configuration.has_key?('restart_command') && !current_environment_configuration['restart_command'].nil?
@@ -108,18 +110,28 @@ module Baboon
         # Open the session
         session.open
 
+        # Set the rails_env session if var is present
+        session.export_hash(
+          'RAILS_ENV' => current_environment_configuration['rails_env'],
+          'RACK_ENV'  => current_environment_configuration['rails_env']
+        )
+
         # Run pre instructions
-        #if current_environment_configuration['callbacks']['before_deploy'].count >= 1
-          #run_commands(host, session, current_environment_configuration['callbacks']['before_deploy'])
-        #end
+        pre_callbacks = current_environment_configuration['callbacks']['before_deploy']
+        if !pre_callbacks.nil? && pre_callbacks.is_a?(Array) && pre_callbacks.count >= 1
+          printf "[\033[36m#{host}\033[0m]: Running pre callbacks...\n"
+          run_commands(host, session, pre_callbacks)
+        end
       
         # Execute commands
         run_commands(host, session, instructions)   
 
         # Run post instructions
-        #if current_environment_configuration['callbacks']['after_deploy'].count >= 1
-          #run_commands(host, session, current_environment_configuration['callbacks']['after_deploy'])
-        #end
+        post_callbacks = current_environment_configuration['callbacks']['after_deploy']
+        if !post_callbacks.nil? && post_callbacks.is_a?(Array) && post_callbacks.count >= 1
+          printf "[\033[36m#{host}\033[0m]: Running post callbacks...\n"
+          run_commands(host, session, post_callbacks)
+        end
 
         # Close and exit the session
         session.exit
@@ -134,7 +146,7 @@ module Baboon
     desc "configuration", "Shows the current configuration for baboon."
     def configuration
       return if @stop
-      puts @configuration.inspect
+      puts @configuration['baboon']['application']
     end
 
     desc "version", "Shows the version of Baboon."

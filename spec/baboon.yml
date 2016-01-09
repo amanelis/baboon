@@ -1,0 +1,30 @@
+baboon:
+  # Give you application a descriptive name, has no effect on the actual
+  # running path or location of your application. Can be different then
+  # what is stored in your scm.
+  application:  'Baboon'
+
+  # For now, Baboon will determine what scm the remote code is stored
+  # in based on the scm path.
+  repository:   'git@github.com:amanelis/baboon.git'
+
+  # Pass multiple environments in this section. Each environment you
+  # specify then becomes part of the deploy command: baboon deploy
+  # {environment}. Below, we have defined two envs of staging and
+  # production. Add more as needed.
+  environments:
+    staging:
+      branch: 'master'
+      callbacks:
+        before_deploy:
+          - 'ruby awesome_script.rb'
+          - 'bash hello.sh'
+        after_deploy:
+          - 'ruby warm_cache.rb'
+          - '/etc/init.d/hello restart'
+      deploy_path: '/home/deploy/baboon'
+      deploy_user: 'deploy'
+      restart_command: 'sudo service nginx restart'
+      rails_env: 'production'
+      servers:
+        - 'localhost'

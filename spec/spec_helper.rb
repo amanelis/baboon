@@ -40,6 +40,14 @@ RSpec.configure do |config|
      end
   end
 
+  # Mock with rspec 
+  config.mock_with :rspec do |mocks|
+    # Prevents you from mocking or stubbing a method that does not exist on
+    # a real object. This is generally recommended, and will default to
+    # `true` in RSpec 4.
+    mocks.verify_partial_doubles = true
+  end
+
   # for connections where we need to have network access we just tag it network
   config.before(:each, :network => true) do
     WebMock.disable!

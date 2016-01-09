@@ -13,19 +13,25 @@ module Baboon
       # used especially for testing Baboon.
       # @param:
       # @return: String[file path, used to locate and initialize the configuration file]
-      def locate_baboon_configuration_file
+      def locate_baboon_configuration_file(specific_file_path=nil)
         config_file = nil
         default_baboon_file_path = 'config/baboon.yml'
-        if File.exists?(default_baboon_file_path)
-          config_file = default_baboon_file_path
-        else
-          Find.find('.') do |path|
-            if path.include?('baboon.yml')
-              config_file = path
-              break
+       
+        if specific_file_path.nil?
+          if File.exists?(default_baboon_file_path)
+            config_file = default_baboon_file_path
+          else
+            Find.find('.') do |path|
+              if path.include?('baboon.yml')
+                config_file = path
+                break
+              end
             end
           end
+        else
+          config_file = specific_file
         end
+        
         config_file
       end
     end # class << self
