@@ -2,7 +2,6 @@ require 'baboon'
 require 'baboon/util'
 
 require 'find'
-require 'net/ssh'
 require 'thor'
 require 'yaml'
 
@@ -83,8 +82,6 @@ module Baboon
 
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
-          "source ~/.bashrc",
-          "source ~/.bash_profile",
           "cd '#{current_environment_configuration['deploy_path']}' && git fetch",
           "cd '#{current_environment_configuration['deploy_path']}' && git checkout #{current_environment_configuration['branch']}",
           "cd '#{current_environment_configuration['deploy_path']}' && git merge origin/#{current_environment_configuration['branch']}",
@@ -103,24 +100,25 @@ module Baboon
           host: host
         }
 
-        # Start the connection and excute command
-        Net::SSH.start(credentials[:host], credentials[:user]) do |session|
-          shell = session.shell.open        
+        # Initialize the SSH class
+        session = Net::SSH::Session.new(credentials[:host], credentials[:user], nil)
 
-          shell.send_data '"[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"'
-          shell.cd current_environment_configuration['deploy_path']
-
-          instructions.each do |instruction|
-            printf "[\033[36m#{host}\033[0m]: #{instruction}\n"
-            shell.send_data instruction
-            #session.exec instruction
-            #session.loop
-          end
-
-          shell.exit
-
-          $stdout.print shell.stdout while shell.stdout?
+        # Open the session
+        begin
+          session.open(10)
+        rescue Timeout::Error 
+          puts "\033[36mSSH connection timed out... bro, are you even connected?\033[0m"
+          return
         end
+
+        # Execute commands
+        session.run_multiple(instructions) do |cmd|
+          printf "[\033[36m#{host}\033[0m]: #{instruction}\n"
+          printf "  \e[0;33m#{result.output}\033[0m"
+        end
+
+        # Close and exit the session
+        session.exit
       end
     end
 
