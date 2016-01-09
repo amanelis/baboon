@@ -57,6 +57,19 @@ baboon:
       # configuration file.
       branch: 'staging'
 
+      # Callbacks, pre and post deploy. Specify any command you want 
+      # executed pre and post in blocks below as array elements.
+      callbacks:
+        # These will be run before the code fetch and server restart.
+        :before_deploy
+          - '/etc/init.d/my_service stop'
+          - 'ruby clean_and_free_memory.rb'
+
+        # These will be run after the code fetch and server restart.
+        :after_deploy
+          - '/etc/init.d/my_service start'
+          - 'ruby warm_cache.rb'
+
       # This is the path on the server where the root of the 
       # application is stored, not where /public is in terms of a rails
       # setup.
@@ -70,6 +83,11 @@ baboon:
       # with.
       rails_env: 'staging'
 
+      # Custom server restart_command. If your server happens to not respond
+      # `touch tmp/restart.txt` - specify your restart command. Otherwise
+      # default Baboon will try and touch the restart.txt file.
+      restart_command: '/etc/init.d/appache2 restart'
+
       # These are the host machines that baboon will ssh into on each
       # deploy. They can be defined as an ip address or a host name
       servers:
@@ -79,9 +97,15 @@ baboon:
     # You can define as many different environments as needed. 
     production:
       branch: 'master'
+      callbacks:
+        before_deploy:
+          - '/etc/init.d/my_service stop'
+        after_deploy:
+          - '/etc/init.d/my_service start'
       deploy_path: '/home/rails/vacuum'
       deploy_user: 'rails'
       rails_env: 'production'
+      restart_command: '/etc/init.d/apache2 restart'
       servers:
         - '10.0.0.1'
         - '10.0.0.2'
