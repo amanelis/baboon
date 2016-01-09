@@ -120,20 +120,26 @@ module Baboon
         can_run_callbacks = current_environment_configuration.has_key?('callbacks')
         
         # Run pre instructions
-        pre_callbacks = current_environment_configuration['callbacks']['before_deploy']
-        if can_run_callbacks && pre_callbacks.is_a?(Array) && pre_callbacks.count >= 1
-          printf "[\033[36m#{host}\033[0m]: Running pre callbacks...\n"
-          run_commands(host, session, pre_callbacks)
+        if can_run_callbacks
+          pre_callbacks = current_environment_configuration['callbacks']['before_deploy']
+          
+          if !pre_callbacks.nil? && pre_callbacks.is_a?(Array) && pre_callbacks.count >= 1
+            printf "[\033[36m#{host}\033[0m]: Running pre callbacks...\n"
+            run_commands(host, session, pre_callbacks)
+          end
         end
       
         # Execute commands
         run_commands(host, session, instructions)   
 
         # Run post instructions
-        post_callbacks = current_environment_configuration['callbacks']['after_deploy']
-        if can_run_callbacks && post_callbacks.is_a?(Array) && post_callbacks.count >= 1
-          printf "[\033[36m#{host}\033[0m]: Running post callbacks...\n"
-          run_commands(host, session, post_callbacks)
+        if can_run_callbacks
+          post_callbacks = current_environment_configuration['callbacks']['after_deploy']
+          
+          if !post_callbacks.nil? && post_callbacks.is_a?(Array) && post_callbacks.count >= 1
+            printf "[\033[36m#{host}\033[0m]: Running post callbacks...\n"
+            run_commands(host, session, post_callbacks)
+          end
         end
 
         # Close and exit the session
