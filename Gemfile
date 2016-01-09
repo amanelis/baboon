@@ -2,9 +2,9 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'thor',     '0.19.1'
-gem 'net-ssh',  '~> 2.6'
-gem 'net-ssh-session', github: 'sosedoff/net-ssh-session'
+gem 'thor',             '0.19.1'
+gem 'net-ssh',          '~> 2.6'
+gem 'net-ssh-session',  '0.1.6'
 
 group :test do
   gem 'rake'
