@@ -106,13 +106,8 @@ module Baboon
         session = Net::SSH::Session.new(credentials[:host], credentials[:user], nil)
 
         # Open the session
-        begin
-          session.open(10)
-        rescue Timeout::Error 
-          puts "\033[36mSSH connection timed out... bro, are you even connected?\033[0m"
-          return
-        end
-
+        session.open
+      
         # Execute commands
         session.run_multiple(instructions) do |cmd|
           printf "[\033[36m#{host}\033[0m]: #{instruction}\n"
