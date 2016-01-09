@@ -18,9 +18,9 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.rubyforge_project = 'baboon'
 
-  s.add_dependency 'thor',          '~> 0.19.1'
-  s.add_dependency 'net-ssh',       '~> 2.6'
-  s.add_dependency 'net-ssh-shell'
+  s.add_runtime_dependency 'thor',    '~> 0.19.1'
+  s.add_runtime_dependency 'net-ssh', '~> 2.6'
+  s.add_runtime_dependency 'net-ssh-shell'
 
   #s.add_development_dependency 'rake'
   #s.add_development_dependency 'rails'
