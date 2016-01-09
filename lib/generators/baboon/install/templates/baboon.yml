@@ -22,6 +22,16 @@ baboon:
       # configuration file.
       branch: 'staging'
 
+      # Pre/Post actions for your deploy to be run and specified here,
+      # run anything.
+      callbacks:
+        before_deploy:
+          - 'ruby ~/my_awesome_setup_script.rb'
+          - 'ruby ~/cache_warmup_check.rb'
+        after_deploy:
+          - 'bash ~/cleanup_pids'
+          - 'free -m'
+
       # This is the path on the server where the root of the 
       # application is stored, not where /public is in terms of a rails
       # setup.
@@ -35,6 +45,12 @@ baboon:
       # with.
       rails_env: 'staging'
 
+      # Restart command, in case your setup does not support
+      #   touch tmp/restart.txt 
+      # you can over write this command here. If you do not wish to use 
+      # this command, just leave it out of the configuration or nil.
+      restart_command: 'service nginx restart'
+
       # These are the host machines that baboon will ssh into on each
       # deploy. They can be defined as an ip address or a host name
       servers:
@@ -47,6 +63,7 @@ baboon:
       deploy_path: '/home/rails/vacuum'
       deploy_user: 'rails'
       rails_env: 'production'
+      restart_command: nil
       servers:
         - '10.0.0.1'
         - '10.0.0.2'
