@@ -61,12 +61,12 @@ baboon:
       # executed pre and post in blocks below as array elements.
       callbacks:
         # These will be run before the code fetch and server restart.
-        :before_deploy
+        before_deploy:
           - '/etc/init.d/my_service stop'
           - 'ruby clean_and_free_memory.rb'
 
         # These will be run after the code fetch and server restart.
-        :after_deploy
+        after_deploy:
           - '/etc/init.d/my_service start'
           - 'ruby warm_cache.rb'
 
