@@ -85,6 +85,7 @@ module Baboon
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
           "source ~/.bashrc",
+          "source ~/.bash_profile",
           "cd '#{current_environment_configuration['deploy_path']}' && git fetch",
           "cd '#{current_environment_configuration['deploy_path']}' && git checkout #{current_environment_configuration['branch']}",
           "cd '#{current_environment_configuration['deploy_path']}' && git merge origin/#{current_environment_configuration['branch']}",
@@ -105,8 +106,9 @@ module Baboon
 
         # Start the connection and excute command
         Net::SSH.start(credentials[:host], credentials[:user]) do |ssh|
+          ssh.exec! '"[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"'
           instructions.each do |instruction|
-            printf "[#{host}]: #{instruction}\n"
+            printf "[\033[36m#{host}\033[0m]: #{instruction}\n"
             ssh.exec instruction
             ssh.loop
           end
