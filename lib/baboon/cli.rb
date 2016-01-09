@@ -79,8 +79,7 @@ module Baboon
 
       # Loop through the servers
       current_environment_configuration['servers'].each do |host|
-        printf "Deploying[#{host}]"
-        printf ""
+        printf "Deploying[#{host}]\n"
 
         # TODO: add lib of different instruction sets for Play framework, nodejs, etc
         instructions = [
@@ -105,13 +104,22 @@ module Baboon
         }
 
         # Start the connection and excute command
-        Net::SSH.start(credentials[:host], credentials[:user]) do |ssh|
-          ssh.exec! '"[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"'
+        Net::SSH.start(credentials[:host], credentials[:user]) do |session|
+          shell = session.shell.open        
+
+          shell.send_data '"[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"'
+          shell.cd current_environment_configuration['deploy_path']
+
           instructions.each do |instruction|
             printf "[\033[36m#{host}\033[0m]: #{instruction}\n"
-            ssh.exec instruction
-            ssh.loop
+            shell.send_data instruction
+            #session.exec instruction
+            #session.loop
           end
+
+          shell.exit
+
+          $stdout.print shell.stdout while shell.stdout?
         end
       end
     end
