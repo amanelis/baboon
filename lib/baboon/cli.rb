@@ -109,17 +109,17 @@ module Baboon
         session.open
 
         # Run pre instructions
-        if current_environment_configuration['callbacks']['before_deploy'].count >= 1
-          run_commands(host, session, current_environment_configuration['callbacks']['before_deploy'])
-        end
+        #if current_environment_configuration['callbacks']['before_deploy'].count >= 1
+          #run_commands(host, session, current_environment_configuration['callbacks']['before_deploy'])
+        #end
       
         # Execute commands
         run_commands(host, session, instructions)   
 
         # Run post instructions
-        if current_environment_configuration['callbacks']['after_deploy'].count >= 1
-          run_commands(host, session, current_environment_configuration['callbacks']['after_deploy'])
-        end
+        #if current_environment_configuration['callbacks']['after_deploy'].count >= 1
+          #run_commands(host, session, current_environment_configuration['callbacks']['after_deploy'])
+        #end
 
         # Close and exit the session
         session.exit
