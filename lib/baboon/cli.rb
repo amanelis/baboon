@@ -107,10 +107,18 @@ module Baboon
 
         # Open the session
         session.open
+
+        # Run pre instructions
+        if current_environment_configuration['callbacks']['before_deploy'].count >= 1
+          run_commands(host, session, current_environment_configuration['callbacks']['before_deploy'])
+        end
       
         # Execute commands
-        session.run_multiple(instructions) do |cmd|
-          printf "[\033[36m#{host}\033[0m]: #{cmd}\n"
+        run_commands(host, session, instructions)   
+
+        # Run post instructions
+        if current_environment_configuration['callbacks']['after_deploy'].count >= 1
+          run_commands(host, session, current_environment_configuration['callbacks']['after_deploy'])
         end
 
         # Close and exit the session
@@ -120,7 +128,7 @@ module Baboon
 
     desc "rollback", "Rollsback the application to a given state via ssh."
     def rollback environment
-      puts "Rolling bak"
+      puts "This functionality has not been implemented yet, coming soon, I promise :)"
     end
 
     desc "configuration", "Shows the current configuration for baboon."
@@ -132,6 +140,14 @@ module Baboon
     desc "version", "Shows the version of Baboon."
     def version
       puts Baboon::VERSION
+    end
+
+  private
+
+    def run_commands(host, session, instructions)
+      session.run_multiple(instructions) do |cmd|
+        printf "[\033[36m#{host}\033[0m]: #{cmd}\n"
+      end
     end
   end
 end
