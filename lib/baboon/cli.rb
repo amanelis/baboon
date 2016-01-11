@@ -158,13 +158,13 @@ module Baboon
       session = Net::SSH::Session.new(current_configuration['servers'].first, current_configuration['deploy_user'], nil)
       session.open
 
-      file_path    = file.gsub(/^\//, '')
+      file_path = file.gsub(/^\//, '')
       printf "[\033[36m#{host}\033[0m]: Fetching file '#{file_path}'\n"
       fetch_result = session.run("/bin/cat #{current_configuration['deploy_path']}/#{file_path}")
       session.exit
 
       printf "[\033[36m#{host}\033[0m]: Results below.\n"
-      printf fetch_result.output
+      printf fetch_result.output + "\n"
       printf "[\033[36m#{host}\033[0m]: Complete.\n"
     end
 
