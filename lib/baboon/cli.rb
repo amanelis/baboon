@@ -153,7 +153,6 @@ module Baboon
       raise InvalidHostError.new("No host found in your configuration, please add one") if current_configuration['servers'].first.nil?
 
       host = current_configuration['servers'].first
-      printf "Fetching[#{host}]: #{file}\n"
 
       # Initialize the SSH class
       session = Net::SSH::Session.new(current_configuration['servers'].first, current_configuration['deploy_user'], nil)
@@ -165,7 +164,7 @@ module Baboon
       session.exit
 
       printf "[\033[36m#{host}\033[0m]: Results below."
-      printf fetch_result.output.inspect
+      printf fetch_result.output
       printf "[\033[36m#{host}\033[0m]: Complete."
     end
 
