@@ -8,6 +8,9 @@ require 'thor'
 require 'yaml'
 
 module Baboon
+  class InvalidConfigurationError < StandardError
+  end
+
   class Cli < Thor
     # Name the package output
     package_name "Baboon"
@@ -21,6 +24,8 @@ module Baboon
     # @return: instance
     def initialize *args
       super
+     
+      # Sync stdout for when communicating over ssh channel
       $stdout.sync ||= true
 
       # Store any errors here during the process so they can be printed to STDOUT
@@ -63,17 +68,9 @@ module Baboon
 
     desc "deploy [ENVIRONMENT]", "Deploys the application to the configured servers via ssh."
     def deploy environment
-      return if @stop
-
-      # Double checked the user typed the correct key
-      if !@configuration['baboon']['environments'].has_key?(environment)
-        printf "#{BABOON_TITLE}\n"
-        printf "  \033[22;31mError:\033[22;37m looks like you typed an incorrect key for an environment you specified in your baboon.yml file\n"
-        printf "  \033[01;32mUsage:\033[22;37m try one of these #{@configuration['baboon']['environments'].keys}\n"
-        errors << "#deploy: missing {environment} key inside of config/baboon.yml - you need at least 1 environment to deploy."
-        @stop = true
-        return
-      end
+      check_configuration(environment)
+      
+      raise InvalidConfigurationError.new("Your configuration is invalid, please check if you have misssss spelled something.") if @stop
 
       # Get the current config for this environment
       current_environment_configuration = @configuration['baboon']['environments'][environment]
@@ -144,7 +141,32 @@ module Baboon
 
         # Close and exit the session
         session.exit
+
+        printf "[\033[36m#{host}\033[0m]: \033[32mComplete!\033[0m\n"
       end
+    end
+
+    desc "fetc", "Fetches a given file from your project's directory"
+    def fetch environment, file
+      current_configuration = @configuration['baboon']['environments'][environment]
+
+      raise InvalidHostError.new("No host found in your configuration, please add one") if current_configuration['servers'].first.nil?
+
+      printf "Fetching[#{host}]: #{file}\n"
+
+      # Initialize the SSH class
+      session = Net::SSH::Session.new(current_configuration['servers'].first, current_configuration['deploy_user'], nil)
+      session.open
+
+      printf "[\033[36m#{host}\033[0m]: Fetching file '#{file_path}'"
+      
+      file_path    = file.gsub(/^\//, '')
+      fetch_result = session.run("/bin/cat #{current_configuration['deploy_path']}/#{file_path}")
+      session.exit
+
+      printf "[\033[36m#{host}\033[0m]: Results below."
+      printf fetch_result.output.inspect
+      printf "[\033[36m#{host}\033[0m]: Complete."
     end
 
     desc "rollback", "Rollsback the application to a given state via ssh."
@@ -164,6 +186,16 @@ module Baboon
     end
 
   private
+    
+    def check_configuration(environment)
+      if !@configuration['baboon']['environments'].has_key?(environment)
+        printf "#{BABOON_TITLE}\n"
+        printf "  \033[22;31mError:\033[22;37m looks like you typed an incorrect key for an environment you specified in your baboon.yml file\n"
+        printf "  \033[01;32mUsage:\033[22;37m try one of these #{@configuration['baboon']['environments'].keys}\n"
+        errors << "#deploy: missing {environment} key inside of config/baboon.yml - you need at least 1 environment to deploy."
+        @stop = true
+      end
+    end
 
     def run_commands(host, session, instructions)
       session.run_multiple(instructions) do |cmd|
