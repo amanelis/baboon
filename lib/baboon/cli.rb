@@ -159,13 +159,13 @@ module Baboon
       session.open
 
       file_path    = file.gsub(/^\//, '')
-      printf "[\033[36m#{host}\033[0m]: Fetching file '#{file_path}'"
+      printf "[\033[36m#{host}\033[0m]: Fetching file '#{file_path}'\n"
       fetch_result = session.run("/bin/cat #{current_configuration['deploy_path']}/#{file_path}")
       session.exit
 
-      printf "[\033[36m#{host}\033[0m]: Results below."
+      printf "[\033[36m#{host}\033[0m]: Results below.\n"
       printf fetch_result.output
-      printf "[\033[36m#{host}\033[0m]: Complete."
+      printf "[\033[36m#{host}\033[0m]: Complete.\n"
     end
 
     desc "rollback", "Rollsback the application to a given state via ssh."
