@@ -152,6 +152,7 @@ module Baboon
 
       raise InvalidHostError.new("No host found in your configuration, please add one") if current_configuration['servers'].first.nil?
 
+      host = current_configuration['servers'].first
       printf "Fetching[#{host}]: #{file}\n"
 
       # Initialize the SSH class
