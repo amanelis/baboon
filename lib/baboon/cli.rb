@@ -140,7 +140,11 @@ module Baboon
         end
 
         # Close and exit the session
-        session.exit
+        begin
+          session.exit
+        rescue => e
+          # Here well want to write to stdout if --debug flag was passed
+        end
 
         printf "[\033[36m#{host}\033[0m]: \033[32mComplete!\033[0m\n"
       end
