@@ -24,7 +24,7 @@ module Baboon
     # @return: instance
     def initialize *args
       super
-     
+
       # Sync stdout for when communicating over ssh channel
       $stdout.sync ||= true
 
@@ -69,7 +69,7 @@ module Baboon
     desc "deploy [ENVIRONMENT]", "Deploys the application to the configured servers via ssh."
     def deploy environment
       check_configuration(environment)
-      
+
       raise InvalidConfigurationError.new("Your configuration is invalid, please check if you have misssss spelled something.") if @stop
 
       # Get the current config for this environment
@@ -86,7 +86,7 @@ module Baboon
           "cd '#{current_environment_configuration['deploy_path']}' && git merge origin/#{current_environment_configuration['branch']}",
           "cd '#{current_environment_configuration['deploy_path']}' && RAILS_ENV=#{current_environment_configuration['rails_env']} bundle install --deployment --without development test",
           "cd '#{current_environment_configuration['deploy_path']}' && RAILS_ENV=#{current_environment_configuration['rails_env']} bundle exec rake assets:precompile",
-          "cd '#{current_environment_configuration['deploy_path']}' && bundle exec rake db:migrate"
+          "cd '#{current_environment_configuration['deploy_path']}' && RAILS_ENV=#{current_environment_configuration['rails_env']} bundle exec rake db:migrate"
         ]
 
         if current_environment_configuration.has_key?('restart_command') && !current_environment_configuration['restart_command'].nil?
@@ -115,24 +115,24 @@ module Baboon
 
         # Check if user has added the callbacks block
         can_run_callbacks = current_environment_configuration.has_key?('callbacks')
-        
+
         # Run pre instructions
         if can_run_callbacks
           pre_callbacks = current_environment_configuration['callbacks']['before_deploy']
-          
+
           if !pre_callbacks.nil? && pre_callbacks.is_a?(Array) && pre_callbacks.count >= 1
             printf "[\033[36m#{host}\033[0m]: Running pre callbacks...\n"
             run_commands(host, session, pre_callbacks)
           end
         end
-      
+
         # Execute commands
-        run_commands(host, session, instructions)   
+        run_commands(host, session, instructions)
 
         # Run post instructions
         if can_run_callbacks
           post_callbacks = current_environment_configuration['callbacks']['after_deploy']
-          
+
           if !post_callbacks.nil? && post_callbacks.is_a?(Array) && post_callbacks.count >= 1
             printf "[\033[36m#{host}\033[0m]: Running post callbacks...\n"
             run_commands(host, session, post_callbacks)
@@ -168,6 +168,13 @@ module Baboon
       printf "[\033[36m#{host}\033[0m]: Complete.\n"
     end
 
+    desc "ref", "Current git ref HEAD of the running code"
+    def ref
+      current_configuration = @configuration['baboon']['environments'][environment]
+
+
+    end
+
     desc "rollback", "Rollsback the application to a given state via ssh."
     def rollback environment
       puts "This functionality has not been implemented yet, coming soon, I promise :)"
@@ -185,7 +192,7 @@ module Baboon
     end
 
   private
-    
+
     def check_configuration(environment)
       if !@configuration['baboon']['environments'].has_key?(environment)
         printf "#{BABOON_TITLE}\n"
