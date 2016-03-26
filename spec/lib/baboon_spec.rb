@@ -9,7 +9,7 @@ describe Baboon do
 
     context 'environment settings' do
       subject { BABOON_ENVIRONMENT_SETTINGS }
-      it { expect(subject).to eq(['branch', 'deploy_path', 'deploy_user', 'rails_env', 'servers']) }
+      it { expect(subject).to eq(['branch', 'deploy_path', 'deploy_user', 'rails_env', 'restart_command', 'servers']) }
     end
   end
 end

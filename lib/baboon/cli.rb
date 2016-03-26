@@ -11,6 +11,9 @@ module Baboon
   class InvalidConfigurationError < StandardError
   end
 
+  class SSHError < StandardError
+  end
+
   class Cli < Thor
     # Name the package output
     package_name "Baboon"
@@ -68,9 +71,9 @@ module Baboon
 
     desc "deploy [ENVIRONMENT]", "Deploys the application to the configured servers via ssh."
     def deploy environment
-      check_configuration(environment)
+      check_configuration!(environment)
 
-      raise InvalidConfigurationError.new("Your configuration is invalid, please check if you have misssss spelled something.") if @stop
+
 
       # Get the current config for this environment
       current_environment_configuration = @configuration['baboon']['environments'][environment]
@@ -150,7 +153,7 @@ module Baboon
       end
     end
 
-    desc "fetc", "Fetches a given file from your project's directory"
+    desc "fetch", "Fetches a given file from your project's directory"
     def fetch environment, file
       current_configuration = @configuration['baboon']['environments'][environment]
 
@@ -186,7 +189,6 @@ module Baboon
 
     desc "configuration", "Shows the current configuration for baboon."
     def configuration
-      return if @stop
       puts @configuration['baboon']['application']
     end
 
@@ -197,19 +199,38 @@ module Baboon
 
   private
 
-    def check_configuration(environment)
+    #
+    # check_configuration
+    #
+    # Pass the environment to check if the configuration is valid. If not, this
+    # method will print to stdout and raise an error.
+    #
+    # @params: String(envrionment)
+    # @returns: nil
+    def check_configuration!(environment)
       if !@configuration['baboon']['environments'].has_key?(environment)
         printf "#{BABOON_TITLE}\n"
         printf "  \033[22;31mError:\033[22;37m looks like you typed an incorrect key for an environment you specified in your baboon.yml file\n"
         printf "  \033[01;32mUsage:\033[22;37m try one of these #{@configuration['baboon']['environments'].keys}\n"
-        errors << "#deploy: missing {environment} key inside of config/baboon.yml - you need at least 1 environment to deploy."
-        @stop = true
+
+        raise InvalidConfigurationError.new("Your configuration is invalid, please check if you have misssss spelled something.")
       end
     end
 
+    #
+    # run_commands
+    #
+    # Processes a command remotely on a host via the ssh session library.
+    #
+    # @params: String(host), Net::SSH::Session(session), Array(instructions)
+    # @returns: nil
     def run_commands(host, session, instructions)
-      session.run_multiple(instructions) do |cmd|
-        printf "[\033[36m#{host}\033[0m]: #{cmd}\n"
+      begin
+        session.run_multiple(instructions) do |cmd|
+          printf "[\033[36m#{host}\033[0m]: #{cmd}\n"
+        end
+      rescue => e
+        raise SSHError.new("There was an error executing a remote command on [#{host}] -> '#{e.inspect}'")
       end
     end
   end
