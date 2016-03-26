@@ -8,7 +8,6 @@ A simple and light weight deployment library for a ruby on rails application 3.0
 <!--[![Code Climate](https://codeclimate.com/github/amanelis/baboon.png)](https://codeclimate.com/github/amanelis/baboon)-->
 <!--[![Coverage Status](https://coveralls.io/repos/amanelis/baboon/badge.png?branch=master)](https://coveralls.io/r/amanelis/baboon)-->
 
-
 # How it works
 Baboon is simple. You provide your server addresses, environments, path, repository, username and Baboon does the rest. By running a simple `baboon deploy {env}` it will do all neccessary operations you intend for it to do on a full deploy to a production staging or development server. All you need is a working rails application on a server with a git repository.
 
