@@ -22,3 +22,4 @@ group :test do
   gem 'faker'
   gem 'coveralls'
 end
+
